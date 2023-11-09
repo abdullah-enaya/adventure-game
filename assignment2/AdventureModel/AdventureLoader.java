@@ -93,6 +93,7 @@ public class AdventureLoader {
      */
     public void parseObjects() throws IOException {
 
+        
         String objectFileName = this.adventureName + "/objects.txt";
         BufferedReader buff = new BufferedReader(new FileReader(objectFileName));
 
