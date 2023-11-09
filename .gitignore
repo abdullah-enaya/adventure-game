@@ -1,0 +1,10 @@
+.*/
+out/
+*.xml
+*.iml
+*.log
+*.class
+.DS_Store
+*/.DS_Store
+*/*.png
+
