@@ -120,10 +120,7 @@ public class SaveView {
             File file = new File(fileName);
             this.adventureGameView.model.saveModel(file);
             this.saveFileErrorLabel.setText(saveFileSuccess);
-            }
         }
     }
-
-
 }
 
