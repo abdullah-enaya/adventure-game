@@ -18,12 +18,15 @@ public class Player implements Serializable {
      */
     public ArrayList<AdventureObject> inventory;
 
+    private Level level;
+
     /**
      * Adventure Game Player Constructor
      */
     public Player(Room currentRoom) {
         this.inventory = new ArrayList<AdventureObject>();
         this.currentRoom = currentRoom;
+        this.level = new Level(1, new int[]{50, 100, 150, 200, 250});
     }
 
     /**
@@ -103,6 +106,10 @@ public class Player implements Serializable {
      */
     public Room getCurrentRoom() {
         return this.currentRoom;
+    }
+
+    public Level getLevel() {
+        return this.level;
     }
 
     /**
