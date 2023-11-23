@@ -13,9 +13,9 @@ public abstract class Character {
     public ArrayList<AdventureObject> specialItems;
     public String backstory;
     public ArrayList<Ability> specialAbilities;
-    public abstract void getHit(int mob);
+    public abstract int getHit(int mob);
 
-    public abstract void attack(int mob);
+    public abstract int attack(int mob);
 
     public abstract void playMinigame();
 

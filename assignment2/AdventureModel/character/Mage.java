@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Mage extends Character {
 
-    public void createMage() {
+    public Mage() {
         this.title = "Mage";
         this.hp = 125;
         this.attackDamage = 3;
@@ -16,15 +16,17 @@ public class Mage extends Character {
     }
 
     @Override
-    public void getHit(int mob) {
-
+    public int getHit(int mob) {
         this.hp = this.hp - mob;
 
+        return this.hp;
     }
 
     @Override
-    public void attack(int mob) {
+    public int attack(int mob) {
         mob = mob - this.attackDamage;
+
+        return mob;
     }
 
     public void playMinigame(){
