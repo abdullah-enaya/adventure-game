@@ -15,17 +15,17 @@ import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.io.*;
-import java.util.ArrayList;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 
-
-/**
- * Class LoadView.
- *
- * Loads Serialized adventure games.
- */
-public class   LoadView {
-
+public class DeleteView {
+    /**
+     * Class DeleteView.
+     * <p>
+     * Deletes Serialized adventure games.
+     */
     private AdventureGameView adventureGameView;
     private Label selectGameLabel;
     private Button selectGameButton;
@@ -34,7 +34,7 @@ public class   LoadView {
     private ListView<String> GameList;
     private String filename = null;
 
-    public LoadView(AdventureGameView adventureGameView){
+    public DeleteView(AdventureGameView adventureGameView) {
 
         //note that the buttons in this view are not accessible!!
         this.adventureGameView = adventureGameView;
@@ -53,9 +53,9 @@ public class   LoadView {
         GameList.setId("GameList");  // DO NOT MODIFY ID
         GameList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         getFiles(GameList); //get files for file selector
-        selectGameButton = new Button("Change Game");
-        selectGameButton.setId("ChangeGame"); // DO NOT MODIFY ID
-        AdventureGameView.makeButtonAccessible(selectGameButton, "select game", "This is the button to select a game", "Use this button to indicate a game file you would like to load.");
+        selectGameButton = new Button("Delete Game");
+        selectGameButton.setId("DeleteGame"); // DO NOT MODIFY ID
+        AdventureGameView.makeButtonAccessible(selectGameButton, "delete game", "This is the button to delete a game", "Use this button to indicate a game file you would like to delete.");
 
         closeWindowButton = new Button("Close Window");
         closeWindowButton.setId("closeWindowButton"); // DO NOT MODIFY ID
@@ -102,7 +102,7 @@ public class   LoadView {
         File[] files = folder.listFiles();
         ObservableList<String> filesStrings = FXCollections.observableArrayList();
 
-        for (File file: files) {
+        for (File file : files) {
             String fileName = file.getName();
             String fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1);
             if (fileExtension.equals("ser")) {
@@ -120,17 +120,14 @@ public class   LoadView {
      * In this case, change the selectGameLabel to indicate a new game has been loaded.
      *
      * @param selectGameLabel the label to use to print errors and or successes to the user.
-     * @param GameList the ListView to populate
+     * @param GameList        the ListView to populate
      */
     private void selectGame(Label selectGameLabel, ListView<String> GameList) throws IOException {
         //saved games will be in the Games/Saved folder!
         String selectedGame = GameList.getSelectionModel().getSelectedItem();
         this.adventureGameView.stopArticulation();
         try {
-            AdventureGame game = this.loadGame("Games" + File.separator + "Saved" + File.separator + selectedGame);
-            this.adventureGameView.model = game;
-            this.adventureGameView.intiUI();
-            selectGameLabel.setText(selectedGame);
+            this.deleteGame("Games" + File.separator + "Saved" + File.separator + selectedGame);
         } catch (ClassNotFoundException | IOException e) {
             String gameModel = this.adventureGameView.model.getDirectoryName().substring(File.separator.length() + 5);
             AdventureGame game = new AdventureGame(gameModel);
@@ -146,20 +143,14 @@ public class   LoadView {
      * @param GameFile file to load
      * @return loaded Tetris Model
      */
-    public AdventureGame loadGame(String GameFile) throws IOException, ClassNotFoundException {
-        // Reading the object from a file
-        FileInputStream file = null;
-        ObjectInputStream in = null;
-        try {
-            file = new FileInputStream(GameFile);
-            in = new ObjectInputStream(file);
-            return (AdventureGame) in.readObject();
-        } finally {
-            if (in != null) {
-                in.close();
-                file.close();
-            }
-        }
+    public void deleteGame(String GameFile) throws IOException, ClassNotFoundException {
+        File file = new File(GameFile);
+        file.delete();
+        selectGameLabel.setText("Successfully deleted the game!");
+        this.adventureGameView.updateScene("");
+        getFiles(GameList); //get files for file selector
     }
 
 }
+
+
