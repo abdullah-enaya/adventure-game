@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Tank extends Character{
 
-    public void createTank(){
+    public Tank() {
         this.title = "Tank";
         this.hp = 150;
         this.attackDamage = 5;
@@ -17,15 +17,19 @@ public class Tank extends Character{
     }
 
     @Override
-    public void getHit(int mob) {
-        
+    public int getHit(int mob) {
+
         this.hp = this.hp - mob;
+
+        return this.hp;
 
     }
 
     @Override
-    public void attack(int mob) {
+    public int attack(int mob) {
         mob = mob - this.attackDamage;
+
+        return mob;
     }
 
     public void playMinigame(){

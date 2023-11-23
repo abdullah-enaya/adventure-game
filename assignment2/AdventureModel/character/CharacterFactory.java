@@ -10,7 +10,6 @@ public class CharacterFactory {
             case "Damage" -> new Damage();
             case "Mage" -> new Mage();
             default -> null;
-
         };
     }
 }
