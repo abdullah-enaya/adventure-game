@@ -57,7 +57,7 @@ public class LoadView {
         selectGameButton.setId("ChangeGame"); // DO NOT MODIFY ID
         AdventureGameView.makeButtonAccessible(selectGameButton, "select game", "This is the button to select a game", "Use this button to indicate a game file you would like to load.");
 
-        closeWindowButton = new Btton("Close Window");
+        closeWindowButton = new Button("Close Window");
         closeWindowButton.setId("closeWindowButton"); // DO NOT MODIFY ID
         closeWindowButton.setStyle("-fx-background-color: #17871b; -fx-text-fill: white;");
         closeWindowButton.setPrefSize(200, 50);
