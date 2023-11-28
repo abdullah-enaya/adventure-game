@@ -131,7 +131,7 @@ public class AdventureGameView {
         addDeleteEvent();
 
         HBox topButtons = new HBox();
-        topButtons.getChildren().addAll(saveButton, helpButton, loadButton, deleteButton);
+        topButtons.getChildren().addAll(saveButton, loadButton, deleteButton, helpButton);
         topButtons.setSpacing(10);
         topButtons.setAlignment(Pos.CENTER);
 
