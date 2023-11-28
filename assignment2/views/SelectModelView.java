@@ -17,13 +17,13 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 
-public class SelectModelView {
-    /**
-     * Class SelectModelView.
-     * <p>
-     * Selects the game model.
-     */
 
+/**
+ * Class SelectModelView.
+ * <p>
+ * Selects the game model.
+ */
+public class SelectModelView {
     private Stage stage;
 
     private GridPane gridPane;
@@ -37,12 +37,20 @@ public class SelectModelView {
 
     private Button loadButton;
 
+    /**
+     * Adventure Select Model View Constructor
+     * __________________________
+     * Initializes attributes
+     */
     public SelectModelView(Stage stage) {
         this.stage = stage;
         this.gridPane = new GridPane();
         initUI();
     }
 
+    /**
+     * Initialize the UI
+     */
     public void initUI() {
         this.stage.setTitle("Select your game!");
         gridPane.setPadding(new Insets(20));
@@ -66,18 +74,18 @@ public class SelectModelView {
         ColumnConstraints column1 = new ColumnConstraints(150);
         ColumnConstraints column2 = new ColumnConstraints(650);
         ColumnConstraints column3 = new ColumnConstraints(150);
-        column3.setHgrow( Priority.SOMETIMES ); //let some columns grow to take any extra space
-        column1.setHgrow( Priority.SOMETIMES );
+        column3.setHgrow(Priority.SOMETIMES); //let some columns grow to take any extra space
+        column1.setHgrow(Priority.SOMETIMES);
 
         // Row constraints
         RowConstraints row1 = new RowConstraints();
-        RowConstraints row2 = new RowConstraints( 550 );
+        RowConstraints row2 = new RowConstraints(550);
         RowConstraints row3 = new RowConstraints();
-        row1.setVgrow( Priority.SOMETIMES );
-        row3.setVgrow( Priority.SOMETIMES );
+        row1.setVgrow(Priority.SOMETIMES);
+        row3.setVgrow(Priority.SOMETIMES);
 
-        gridPane.getColumnConstraints().addAll( column1 , column2 , column1 );
-        gridPane.getRowConstraints().addAll( row1 , row2 , row1 );
+        gridPane.getColumnConstraints().addAll(column1, column2, column1);
+        gridPane.getRowConstraints().addAll(row1, row2, row1);
 
         final Stage dialog = new Stage(); //dialogue box
         dialog.initModality(Modality.APPLICATION_MODAL);
@@ -112,13 +120,17 @@ public class SelectModelView {
         hBox.setAlignment(Pos.CENTER);
         gridPane.add(hBox, 1, 2);
 
-        var scene = new Scene( gridPane ,  1000, 800);
+        var scene = new Scene(gridPane, 1000, 800);
         scene.setFill(Color.BLACK);
         this.stage.setScene(scene);
         this.stage.setResizable(false);
         this.stage.show();
     }
 
+    /**
+     * This method handles the event related to the
+     * load button.
+     */
     public void addLoadEvent() {
         loadButton.setOnAction(e -> {
             gridPane.requestFocus();
@@ -126,12 +138,31 @@ public class SelectModelView {
         });
     }
 
+    /**
+     * customizeButton
+     * __________________________
+     *
+     * @param inputButton the button to make stylish :)
+     * @param w width
+     * @param h height
+     */
     private void customizeButton(Button inputButton, int w, int h) {
         inputButton.setPrefSize(w, h);
         inputButton.setFont(new Font("Arial", 16));
         inputButton.setStyle("-fx-background-color: #17871b; -fx-text-fill: white;");
     }
 
+    /**
+     * makeButtonAccessible
+     * __________________________
+     * For information about ARIA standards, see
+     * https://www.w3.org/WAI/standards-guidelines/aria/
+     *
+     * @param inputButton the button to add screenreader hooks to
+     * @param name ARIA name
+     * @param shortString ARIA accessible text
+     * @param longString ARIA accessible help text
+     */
     public static void makeButtonAccessible(Button inputButton, String name, String shortString, String longString) {
         inputButton.setAccessibleRole(AccessibleRole.BUTTON);
         inputButton.setAccessibleRoleDescription(name);
@@ -169,7 +200,7 @@ public class SelectModelView {
      * In this case, change the selectGameLabel to indicate a new game has been loaded.
      *
      * @param selectGameLabel the label to use to print errors and or successes to the user.
-     * @param GameList        the ListView to populate
+     * @param GameList the ListView to populate
      */
     private void selectGame(Label selectGameLabel, ListView<String> GameList) throws IOException {
         //saved games will be in the Games/Saved folder!
