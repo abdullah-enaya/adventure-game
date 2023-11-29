@@ -24,7 +24,7 @@ import java.util.ArrayList;
  *
  * Loads Serialized adventure games.
  */
-public class   LoadView {
+public class LoadView {
 
     private AdventureGameView adventureGameView;
     private Label selectGameLabel;
