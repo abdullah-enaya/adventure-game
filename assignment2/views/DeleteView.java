@@ -17,12 +17,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
+/**
+ * Class DeleteView.
+ * <p>
+ * Deletes Serialized adventure games.
+ */
 public class DeleteView {
-    /**
-     * Class DeleteView.
-     * <p>
-     * Deletes Serialized adventure games.
-     */
     private AdventureGameView adventureGameView;
     private Label selectGameLabel;
     private Button selectGameButton;
@@ -31,6 +31,11 @@ public class DeleteView {
     private ListView<String> GameList;
     private String filename = null;
 
+    /**
+     * Initialize DeleteView.
+     * @param adventureGameView the Adventure Game view
+     *                          associated with this view
+     */
     public DeleteView(AdventureGameView adventureGameView) {
 
         //note that the buttons in this view are not accessible!!
@@ -111,13 +116,10 @@ public class DeleteView {
 
     /**
      * Select the Game
-     * Try to load a game from the Games/Saved
-     * If successful, stop any articulation and put the name of the loaded file in the selectGameLabel.
-     * If unsuccessful, stop any articulation and start an entirely new game from scratch.
-     * In this case, change the selectGameLabel to indicate a new game has been loaded.
+     * Try to delete a game from the Games/Saved
      *
      * @param selectGameLabel the label to use to print errors and or successes to the user.
-     * @param GameList        the ListView to populate
+     * @param GameList the ListView to populate
      */
     private void selectGame(Label selectGameLabel, ListView<String> GameList) throws IOException {
         //saved games will be in the Games/Saved folder!
@@ -135,10 +137,9 @@ public class DeleteView {
     }
 
     /**
-     * Load the Game from a file
+     * Delete the Game file.
      *
-     * @param GameFile file to load
-     * @return loaded Tetris Model
+     * @param GameFile file to delete
      */
     public void deleteGame(String GameFile) throws IOException, ClassNotFoundException {
         File file = new File(GameFile);
