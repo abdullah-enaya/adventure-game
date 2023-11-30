@@ -27,6 +27,12 @@ public class Passage implements Serializable {
     private String keyName;
 
     /**
+     * The level required to access this passage.
+     */
+    private int level;
+
+
+    /**
      * This stores boolean to represent if the passage is blocked.
      */
     private boolean isBlocked;
@@ -36,10 +42,12 @@ public class Passage implements Serializable {
      *
      * @param direction A string representation of a direction.
      * @param roomNumber A string representation of a room number.
+     * @param level The level required to access this passage.
      */
-    public Passage(String direction, String roomNumber) {
+    public Passage(String direction, String roomNumber, int level) {
         this.direction = direction;
         this.destinationRoom = Integer.parseInt(roomNumber);
+        this.level = level;
         this.keyName = null;
     }
 
@@ -48,11 +56,13 @@ public class Passage implements Serializable {
      *
      * @param direction A string representation of a direction.
      * @param roomNumber A string representation of a room number.
+     * @param level The level required to access this passage.
      * @param key A string representation of a key if the passage is blocked.
      */
-    public Passage(String direction, String roomNumber, String key) {
+    public Passage(String direction, String roomNumber, int level, String key) {
         this.direction = direction;
         this.destinationRoom = Integer.parseInt(roomNumber);
+        this.level = level;
         this.keyName = key;
         this.isBlocked = true;
     }
@@ -73,6 +83,15 @@ public class Passage implements Serializable {
      */
     public int getDestinationRoom() {
         return this.destinationRoom;
+    }
+
+    /**
+     * Returns the level required to access this passage.
+     *
+     * @return The level required to access this passage.
+     */
+    public int getLevel() {
+        return this.level;
     }
 
     /**

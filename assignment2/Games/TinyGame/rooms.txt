@@ -1,8 +1,9 @@
 1
 Outside building
+XP 10
 You are standing at the end of a road before a small brick building.  A small stream flows out of the building and down a gully to the south.  A road runs up a small hill to the west.
 -----
-WEST       2
+WEST       2|L2
 UP         2
 NORTH      3
 IN         3
@@ -11,10 +12,11 @@ DOWN       4
 
 2
 End of road
+XP 1000
 You are at the end of a road at the top of a small hill. You can see a small building in the valley to the east.
 -----
 EAST       1
-WEST       3
+WEST       3|L1
 DOWN       3
 
 3
@@ -23,8 +25,8 @@ You are inside a building, a well house for a large spring. The exit door is to 
 -----
 SOUTH      1
 WEST       5
-OUT        6/BIRD
-OUT        1
+OUT        6/BIRD|L2
+OUT        1|L2
 NORTH     3
 XYZZY     2/BOOK
 XYZZY     1
