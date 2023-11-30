@@ -42,7 +42,7 @@ public class AdventureGameView {
 
     AdventureGame model; //model of the game
     Stage stage; //stage on which all is rendered
-    Button saveButton, loadButton, helpButton; //buttons
+    Button saveButton, loadButton, helpButton, deleteButton; //buttons
     Boolean helpToggle = false; //is help on display?
 
     GridPane gridPane = new GridPane(); //to hold images and buttons
@@ -72,7 +72,7 @@ public class AdventureGameView {
     public void intiUI() {
 
         // setting up the stage
-        this.stage.setTitle("enayaabd's Adventure Game"); //Replace <YOUR UTORID> with your UtorID
+        this.stage.setTitle("Group 74's Adventure Game"); //Replace <YOUR UTORID> with your UtorID
 
         //Inventory + Room items
         objectsInInventory.setSpacing(10);
@@ -124,8 +124,14 @@ public class AdventureGameView {
         makeButtonAccessible(helpButton, "Help Button", "This button gives game instructions.", "This button gives instructions on the game controls. Click it to learn how to play.");
         addInstructionEvent();
 
+        deleteButton = new Button("Delete");
+        deleteButton.setId("Delete");
+        customizeButton(deleteButton, 100, 50);
+        makeButtonAccessible(deleteButton, "Delete Button", "This button deletes a game from a file.", "This button deletes the game from a file. Click it in order to delete a game that you saved at a prior date.");
+        addDeleteEvent();
+
         HBox topButtons = new HBox();
-        topButtons.getChildren().addAll(saveButton, helpButton, loadButton);
+        topButtons.getChildren().addAll(saveButton, loadButton, deleteButton, helpButton);
         topButtons.setSpacing(10);
         topButtons.setAlignment(Pos.CENTER);
 
@@ -540,6 +546,16 @@ public class AdventureGameView {
         });
     }
 
+    /**
+     * This method handles the event related to the
+     * delete button.
+     */
+    public void addDeleteEvent() {
+        deleteButton.setOnAction(e -> {
+            gridPane.requestFocus();
+            DeleteView deleteView = new DeleteView(this);
+        });
+    }
 
     /**
      * This method articulates Room Descriptions
