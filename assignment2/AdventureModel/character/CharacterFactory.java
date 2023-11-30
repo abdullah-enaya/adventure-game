@@ -10,9 +10,9 @@ public class CharacterFactory {
 
     public Character getCharacter(String name){
         return switch (name){
-            case "Dwarf" -> new Tank();
-            case "Damage" -> new Damage();
-            case "Mage" -> new Mage();
+            case "DWARF" -> new Tank();
+            case "DAMAGE" -> new Damage();
+            case "MAGE" -> new Mage();
             default -> null;
         };
     }

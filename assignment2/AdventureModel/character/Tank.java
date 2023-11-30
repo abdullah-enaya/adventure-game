@@ -9,7 +9,7 @@ public class Tank extends Character{
      * Damage character class initialized with unique attribute values
      */
     public Tank() {
-        this.title = "Tank";
+        this.title = "Dwarf";
         this.hp = 150;
         this.attackDamage = 5;
         this.attackRange = 1;

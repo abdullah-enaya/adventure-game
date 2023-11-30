@@ -144,10 +144,4 @@ public class Player implements Serializable {
         }
         return objects;
     }
-
-    public void setCharacterStatus(Character s) {
-        this.character = s;
-    }
-
-
 }
