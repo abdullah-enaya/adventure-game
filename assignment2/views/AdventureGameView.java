@@ -147,7 +147,8 @@ public class AdventureGameView {
 
             VBox dwarf = new VBox();
 
-            Image imageDwarf = new Image (new FileInputStream("C:\\Users\\kinga\\CSC207\\pestana5\\group_74\\assignment2\\Games\\TinyGame\\characterImages\\mountain dwarf.png"));
+            Image imageDwarf = new Image (new FileInputStream(this.model.getDirectoryName() + File.separator + "characterImages" + File.separator + object.getName() + ".png"));
+            
             ImageView imageViewDwarf = new ImageView(imageDwarf);
             imageViewDwarf.setFitHeight(190);
             imageViewDwarf.setFitWidth(190);
@@ -169,7 +170,7 @@ public class AdventureGameView {
 
             VBox mage = new VBox();
 
-            Image imageMage = new Image (new FileInputStream("C:\\Users\\kinga\\CSC207\\pestana5\\group_74\\assignment2\\Games\\TinyGame\\characterImages\\pngimg.com - wizard_PNG16.png"));
+            Image imageMage = new Image (new FileInputStream(this.model.getDirectoryName() + File.separator + "characterImages" + File.separator + object.getName() + ".png"));
             ImageView imageViewMage = new ImageView(imageMage);
             imageViewMage.setFitHeight(200);
             imageViewMage.setFitWidth(200);
@@ -190,7 +191,7 @@ public class AdventureGameView {
 
             VBox damage = new VBox();
 
-            Image imageDamage = new Image (new FileInputStream("Games\\TinyGame\\characterImages\\fart2.png"));
+            Image imageDamage = new Image (new FileInputStream(this.model.getDirectoryName() + File.separator + "characterImages" + File.separator + object.getName() + ".png"));
             ImageView imageViewDamage = new ImageView(imageDamage);
             imageViewDamage.setFitHeight(200);
             imageViewDamage.setFitWidth(200);
