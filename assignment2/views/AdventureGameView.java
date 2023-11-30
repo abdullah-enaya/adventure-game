@@ -82,11 +82,7 @@ public class AdventureGameView {
 
         // setting up the stage
         this.stage.setTitle("Group 74's Adventure Game"); //Replace <YOUR UTORID> with your UtorID
-<<<<<<< HEAD
-
-=======
         this.gridPane = new GridPane();
->>>>>>> 9937c31 ([DEV-1.3] Implemented SelectModel view, changed AdventureGameApp.)
         //Inventory + Room items
         objectsInInventory.setSpacing(10);
         objectsInInventory.setAlignment(Pos.TOP_CENTER);
