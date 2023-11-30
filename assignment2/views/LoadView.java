@@ -129,6 +129,7 @@ public class LoadView {
         try {
             AdventureGame game = this.loadGame("Games" + File.separator + "Saved" + File.separator + selectedGame);
             this.adventureGameView.model = game;
+
             this.adventureGameView.intiUI();
             selectGameLabel.setText(selectedGame);
         } catch (ClassNotFoundException | IOException e) {
