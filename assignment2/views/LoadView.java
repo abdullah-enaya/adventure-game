@@ -133,11 +133,7 @@ public class LoadView {
             this.adventureGameView.intiUI();
             selectGameLabel.setText(selectedGame);
         } catch (ClassNotFoundException | IOException e) {
-            String gameModel = this.adventureGameView.model.getDirectoryName().substring(File.separator.length() + 5);
-            AdventureGame game = new AdventureGame(gameModel);
-            this.adventureGameView.model = game;
-            this.adventureGameView.intiUI();
-            selectGameLabel.setText("New game has been loaded.");
+            SelectModelView view = new SelectModelView(this.adventureGameView.stage);
         }
     }
 
