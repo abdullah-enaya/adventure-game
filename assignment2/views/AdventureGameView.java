@@ -147,7 +147,7 @@ public class AdventureGameView {
 
             VBox dwarf = new VBox();
 
-            Image imageDwarf = new Image (new FileInputStream(this.model.getDirectoryName() + File.separator + "characterImages" + File.separator + object.getName() + ".png"));
+            Image imageDwarf = new Image (new FileInputStream(this.model.getDirectoryName() + File.separator + "characterImages" + File.separator + "mountain dwarf.png"));
             
             ImageView imageViewDwarf = new ImageView(imageDwarf);
             imageViewDwarf.setFitHeight(190);
@@ -170,7 +170,7 @@ public class AdventureGameView {
 
             VBox mage = new VBox();
 
-            Image imageMage = new Image (new FileInputStream(this.model.getDirectoryName() + File.separator + "characterImages" + File.separator + object.getName() + ".png"));
+            Image imageMage = new Image (new FileInputStream(this.model.getDirectoryName() + File.separator + "characterImages" + File.separator + "pngimg.com - wizard_PNG16.png"));
             ImageView imageViewMage = new ImageView(imageMage);
             imageViewMage.setFitHeight(200);
             imageViewMage.setFitWidth(200);
@@ -191,7 +191,7 @@ public class AdventureGameView {
 
             VBox damage = new VBox();
 
-            Image imageDamage = new Image (new FileInputStream(this.model.getDirectoryName() + File.separator + "characterImages" + File.separator + object.getName() + ".png"));
+            Image imageDamage = new Image (new FileInputStream(this.model.getDirectoryName() + File.separator + "characterImages" + File.separator + "fart2.png"));
             ImageView imageViewDamage = new ImageView(imageDamage);
             imageViewDamage.setFitHeight(200);
             imageViewDamage.setFitWidth(200);
