@@ -66,6 +66,11 @@ public class AdventureGameView {
         intiUI();
     }
 
+    /**
+     * Adventure Game View Bare Constructor
+     * __________________________
+     * Initializes only stage, model still needs to be set and intiUI called.
+     */
     public AdventureGameView(Stage stage) {
         this.stage = stage;
     }
