@@ -15,6 +15,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 
@@ -222,7 +223,11 @@ public class SelectModelView {
      * @return new AdventureGame
      */
     public AdventureGame selectModel(String GameModel) throws IOException, ClassNotFoundException {
-        return new AdventureGame(GameModel);
+        if (GameModel != null) {
+            return new AdventureGame(GameModel);
+        } else {
+            throw new FileNotFoundException();
+        }
     }
 
     /**
