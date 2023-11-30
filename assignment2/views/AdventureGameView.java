@@ -45,7 +45,7 @@ public class AdventureGameView {
     Button saveButton, loadButton, helpButton, deleteButton; //buttons
     Boolean helpToggle = false; //is help on display?
 
-    GridPane gridPane = new GridPane(); //to hold images and buttons
+    GridPane gridPane; //to hold images and buttons
     Label roomDescLabel = new Label(); //to hold room description and/or instructions
     VBox objectsInRoom = new VBox(); //to hold room items
     VBox objectsInInventory = new VBox(); //to hold inventory items
@@ -67,13 +67,26 @@ public class AdventureGameView {
     }
 
     /**
+     * Adventure Game View Bare Constructor
+     * __________________________
+     * Initializes only stage, model still needs to be set and intiUI called.
+     */
+    public AdventureGameView(Stage stage) {
+        this.stage = stage;
+    }
+
+    /**
      * Initialize the UI
      */
     public void intiUI() {
 
         // setting up the stage
         this.stage.setTitle("Group 74's Adventure Game"); //Replace <YOUR UTORID> with your UtorID
+<<<<<<< HEAD
 
+=======
+        this.gridPane = new GridPane();
+>>>>>>> 9937c31 ([DEV-1.3] Implemented SelectModel view, changed AdventureGameApp.)
         //Inventory + Room items
         objectsInInventory.setSpacing(10);
         objectsInInventory.setAlignment(Pos.TOP_CENTER);
