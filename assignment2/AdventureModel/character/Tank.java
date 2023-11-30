@@ -2,8 +2,12 @@ package AdventureModel.character;
 
 import java.util.ArrayList;
 
+//Tank character class
 public class Tank extends Character{
 
+    /**
+     * Damage character class initialized with unique attribute values
+     */
     public Tank() {
         this.title = "Tank";
         this.hp = 150;
@@ -16,7 +20,13 @@ public class Tank extends Character{
 
     }
 
+    /**
+     * Responsible for taking damage from mobs / boss
+     * @param mob is mob damage
+     * @return character hp
+     */
     @Override
+
     public int getHit(int mob) {
 
         this.hp = this.hp - mob;
@@ -25,6 +35,11 @@ public class Tank extends Character{
 
     }
 
+    /**
+     * Responsible for attacking mob with unique attack value
+     * @param mob is the mobs hp who is being attacked
+     * @return the mobs hp
+     */
     @Override
     public int attack(int mob) {
         mob = mob - this.attackDamage;
