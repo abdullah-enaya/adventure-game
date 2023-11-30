@@ -1,12 +1,16 @@
 package AdventureModel.character;
 
-import java.io.IOException;
-
 public class CharacterFactory {
 
-    public Character getCharacter(String name) throws IOException{
+    /** Character Factory class, typing in the character creates corresponding class
+     *
+     * @param name of the file
+     * @return the type of character
+     */
+
+    public Character getCharacter(String name){
         return switch (name){
-            case "Tank" -> new Tank();
+            case "Dwarf" -> new Tank();
             case "Damage" -> new Damage();
             case "Mage" -> new Mage();
             default -> null;

@@ -4,6 +4,9 @@ import AdventureModel.AdventureObject;
 
 import java.util.ArrayList;
 
+/**
+ * Parent class for the characters. All character types will inherit from this class.
+ */
 public abstract class Character {
     public String title;
     public int hp;

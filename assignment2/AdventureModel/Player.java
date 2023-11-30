@@ -1,5 +1,7 @@
 package AdventureModel;
 
+import AdventureModel.character.Character;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -18,6 +20,8 @@ public class Player implements Serializable {
      */
     public ArrayList<AdventureObject> inventory;
 
+    public Character character;
+
     /**
      * The level and xp the player is currently at.
      */
@@ -30,6 +34,7 @@ public class Player implements Serializable {
         this.inventory = new ArrayList<AdventureObject>();
         this.currentRoom = currentRoom;
         this.level = new Level(1, new int[]{50, 100, 150, 200, 250});
+        this.character = null;
     }
 
     /**
@@ -138,6 +143,10 @@ public class Player implements Serializable {
             objects.add(this.inventory.get(i).getName());
         }
         return objects;
+    }
+
+    public void setCharacterStatus(Character s) {
+        this.character = s;
     }
 
 
