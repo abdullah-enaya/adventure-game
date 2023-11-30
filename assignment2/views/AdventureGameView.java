@@ -4,6 +4,9 @@ import AdventureModel.AdventureGame;
 import AdventureModel.AdventureObject;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
+import javafx.beans.binding.DoubleBinding;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -18,6 +21,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.layout.*;
 import javafx.scene.input.KeyEvent; //you will need these!
 import javafx.scene.input.KeyCode;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
@@ -26,17 +30,16 @@ import javafx.util.Duration;
 import javafx.event.EventHandler; //you will need this too!
 import javafx.scene.AccessibleRole;
 
+import javax.swing.text.View;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class AdventureGameView.
  *
- * This is the Class that will visualize your model.
- * You are asked to demo your visualization via a Zoom
- * recording. Place a link to your recording below.
+ * This is the Class that will visualize the model.
  *
- * YOUTUBE LINK: https://youtu.be/dnSDB22MBsE
  */
 public class AdventureGameView {
 
@@ -51,7 +54,8 @@ public class AdventureGameView {
     VBox objectsInInventory = new VBox(); //to hold inventory items
     ImageView roomImageView; //to hold room image
     TextField inputTextField; //for user input
-
+    Label levelLabel, xpLabel;
+    ProgressBar xpBar;
     private MediaPlayer mediaPlayer; //to play audio
     private boolean mediaPlaying; //to know if the audio is playing
 
@@ -112,7 +116,7 @@ public class AdventureGameView {
         row3.setVgrow( Priority.SOMETIMES );
 
         gridPane.getColumnConstraints().addAll( column1 , column2 , column1 );
-        gridPane.getRowConstraints().addAll( row1 , row2 , row1 );
+        gridPane.getRowConstraints().addAll( row1 , row2 , row1, row1 );
 
         // Buttons
         saveButton = new Button("Save");
@@ -174,6 +178,26 @@ public class AdventureGameView {
         commandLabel.setStyle("-fx-text-fill: white;");
         commandLabel.setFont(new Font("Arial", 16));
 
+        // Level and XP bar
+        levelLabel = new Label( "You are at Level (" + this.model.player.getLevel().getLevel() + ")    |    XP: ");
+        levelLabel.setStyle("-fx-text-fill: white;");
+        levelLabel.setFont(new Font("Arial", 16));
+
+        xpBar = new ProgressBar();
+        xpBar.setMaxWidth(Double.MAX_VALUE);
+
+        xpLabel = new Label();
+        xpLabel.setStyle("-fx-text-fill: white;");
+        xpLabel.setFont(new Font("Arial", 16));
+
+        HBox levelView = new HBox();
+        levelView.setStyle("-fx-background-color: #000000;");
+        levelView.setPadding(new Insets(20, 20, 20, 20));
+        levelView.getChildren().addAll(levelLabel, xpBar, xpLabel);
+        HBox.setHgrow(xpBar, Priority.ALWAYS);
+        levelView.setSpacing(10);
+        gridPane.add( levelView, 0, 2, 3, 1 );
+
         updateScene(""); //method displays an image and whatever text is supplied
         updateItems(); //update items shows inventory and objects in rooms
 
@@ -184,7 +208,7 @@ public class AdventureGameView {
         textEntry.getChildren().addAll(commandLabel, inputTextField);
         textEntry.setSpacing(10);
         textEntry.setAlignment(Pos.CENTER);
-        gridPane.add( textEntry, 0, 2, 3, 1 );
+        gridPane.add( textEntry, 0, 3, 3, 1 );
 
         // Render everything
         var scene = new Scene( gridPane ,  1000, 800);
@@ -192,7 +216,6 @@ public class AdventureGameView {
         this.stage.setScene(scene);
         this.stage.setResizable(false);
         this.stage.show();
-
     }
 
 
@@ -358,8 +381,38 @@ public class AdventureGameView {
         gridPane.add(roomPane, 1, 1);
         stage.sizeToScene();
 
+        updateLevel();
+
         //finally, articulate the description
         if (textToDisplay == null || textToDisplay.isBlank()) articulateRoomDescription();
+    }
+
+    /**
+     * updateLevel
+     * __________________________
+     * Update the level and xp displayed on the screen.
+     */
+    public void updateLevel() {
+        String levelText = "You are at Level (" + this.model.player.getLevel().getLevel() + ")    |    XP: ";
+        String oldLevel = levelLabel.getText();
+        levelLabel.setText(levelText);
+
+        double xpRatio = (double) this.model.player.getLevel().getXP() / this.model.player.getLevel().getXPToNextLevel();
+        xpBar.setProgress(xpRatio);
+
+        xpLabel.setText("(" + this.model.player.getLevel().getXPString() + ")");
+        xpLabel.setStyle("-fx-text-fill: white;");
+        xpLabel.setFont(new Font("Arial", 16));
+
+        if (!levelText.equals(oldLevel)) {
+            String oldRoomLabel = this.roomDescLabel.getText();
+            this.roomDescLabel.setText(this.model.player.getLevel().levelUpText());
+            PauseTransition pause = new PauseTransition(Duration.seconds(2));
+            pause.setOnFinished(actionEvent -> {
+                this.roomDescLabel.setText(oldRoomLabel);
+            });
+            pause.play();
+        }
     }
 
     /**
@@ -409,15 +462,7 @@ public class AdventureGameView {
     /**
      * updateItems
      * __________________________
-     *
-     * This method is partially completed, but you are asked to finish it off.
-     *
-     * The method should populate the objectsInRoom and objectsInInventory Vboxes.
-     * Each Vbox should contain a collection of nodes (Buttons, ImageViews, you can decide)
-     * Each node represents a different object.
-     * 
-     * Images of each object are in the assets 
-     * folders of the given adventure game.
+     * Update the items with buttons for items in room and in inventory.
      */
     public void updateItems() {
         this.objectsInInventory.getChildren().clear();
@@ -435,11 +480,12 @@ public class AdventureGameView {
             button.setContentDisplay(ContentDisplay.TOP);
             makeButtonAccessible(button, object.getName(), "Take " + object.getName() + ".", "Take " + object.getName() + ". Press this button to take the object into your inventory.");
             button.addEventHandler(MouseEvent.MOUSE_CLICKED, (mouseEvent) -> {
-                this.model.player.takeObject(object.getName());
-                this.updateItems();
-                this.updateScene("YOU HAVE TAKEN: \n " + object.getName());
+                this.submitEvent("TAKE " + object.getName());
             });
             this.objectsInRoom.getChildren().add(button);
+            if (this.model.player.getLevel().getLevel() < object.getLevel()) {
+                button.setOpacity(0.4);
+            }
         }
 
         //write some code here to add images of objects in a player's inventory room to the objectsInInventory Vbox
@@ -456,7 +502,7 @@ public class AdventureGameView {
             button.addEventHandler(MouseEvent.MOUSE_CLICKED, (mouseEvent) -> {
                 this.model.player.dropObject(object.getName());
                 this.updateItems();
-                this.updateScene("YOU HAVE DROPPED: \n " + object.getName());
+                this.updateScene("YOU HAVE DROPPED: " + object.getName());
             });
             this.objectsInInventory.getChildren().addAll(button);
         }
@@ -476,7 +522,7 @@ public class AdventureGameView {
         scI.setStyle("-fx-background: #000000; -fx-background-color:transparent;");
         gridPane.add(scI,2,1);
 
-
+        updateLevel();
     }
 
     /**

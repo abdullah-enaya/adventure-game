@@ -1,11 +1,22 @@
 BIRD
 a water bird
+XP 50
+1
+
+BIRD9
+a water bird
+1/L2
+
+BIRD10
+a water bird
 1
 
 CHEST
 a pirate chest
+XP 500
 2
 
 BOOK
 a copy of an illuminated manuscript
+XP 20
 3

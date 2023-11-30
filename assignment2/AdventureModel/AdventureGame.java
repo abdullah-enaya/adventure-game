@@ -11,7 +11,7 @@ public class AdventureGame implements Serializable {
     private String helpText; //A variable to store the Help text of the game. This text is displayed when the user types "HELP" command.
     private final HashMap<Integer, Room> rooms; //A list of all the rooms in the game.
     private HashMap<String,String> synonyms = new HashMap<>(); //A HashMap to store synonyms of commands.
-    private final String[] actionVerbs = {"QUIT","INVENTORY","TAKE","DROP"}; //List of action verbs (other than motions) that exist in all games. Motion vary depending on the room and game.
+    private final String[] actionVerbs = {"QUIT","INVENTORY","TAKE","DROP","LEVEL"}; //List of action verbs (other than motions) that exist in all games. Motion vary depending on the room and game.
     public Player player; //The Player of the game.
 
     /**
@@ -60,7 +60,10 @@ public class AdventureGame implements Serializable {
         loader.loadGame();
 
         // set up the player's current location
-        this.player = new Player(this.rooms.get(1));
+        Room firstRoom = this.rooms.get(1);
+        this.player = new Player(firstRoom);
+        this.player.getLevel().addXP(firstRoom.getXP());
+        firstRoom.visit();
     }
 
     /**
@@ -90,16 +93,18 @@ public class AdventureGame implements Serializable {
      * movePlayer
      *
      * Moves the player in the given direction, if possible.
-     * Return false if the player wins or dies as a result of the move.
+     * Return -1 if the player wins or dies as a result of the move, or the level required (> 0) if
+     * the passage was blocked only because of the level, 0 otherwise.
      *
      * @param direction the move command
-     * @return false, if move results in death or a win (and game is over).  Else, true.
+     * @return -1, if move results in death or a win (and game is over), or the level required (> 0) if
+     * the passage was blocked only because of the level, 0 otherwise.
      */
-    public boolean movePlayer(String direction) {
+    public int movePlayer(String direction) {
 
         direction = direction.toUpperCase();
         PassageTable motionTable = this.player.getCurrentRoom().getMotionTable(); //where can we move?
-        if (!motionTable.optionExists(direction)) return true; //no move
+        if (!motionTable.optionExists(direction)) return 0; //no move
 
         ArrayList<Passage> possibilities = new ArrayList<>();
         for (Passage entry : motionTable.getDirection()) {
@@ -111,9 +116,6 @@ public class AdventureGame implements Serializable {
         //try the blocked passages first
         Passage chosen = null;
         for (Passage entry : possibilities) {
-            System.out.println(entry.getIsBlocked());
-            System.out.println(entry.getKeyName());
-
             if (chosen == null && entry.getIsBlocked()) {
                 if (this.player.getInventory().contains(entry.getKeyName())) {
                     chosen = entry; //we can make it through, given our stuff
@@ -122,13 +124,25 @@ public class AdventureGame implements Serializable {
             } else { chosen = entry; } //the passage is unlocked
         }
 
-        if (chosen == null) return true; //doh, we just can't move.
+        if (chosen == null) return 0; //doh, we just can't move.
+
+        if (this.player.getLevel().getLevel() < chosen.getLevel()) {
+            return chosen.getLevel();
+        }
 
         int roomNumber = chosen.getDestinationRoom();
         Room room = this.rooms.get(roomNumber);
         this.player.setCurrentRoom(room);
+        if (!room.getVisited()) {
+            this.player.getLevel().addXP(room.getXP());
+            room.visit();
+        }
 
-        return !this.player.getCurrentRoom().getMotionTable().getDirection().get(0).getDirection().equals("FORCED");
+        if (this.player.getCurrentRoom().getMotionTable().getDirection().get(0).getDirection().equals("FORCED")) {
+            return -1;
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -144,32 +158,50 @@ public class AdventureGame implements Serializable {
         PassageTable motionTable = this.player.getCurrentRoom().getMotionTable(); //where can we move?
 
         if (motionTable.optionExists(inputArray[0])) {
-            if (!movePlayer(inputArray[0])) {
+            int move = movePlayer(inputArray[0]);
+            if (move == -1) {
                 if (this.player.getCurrentRoom().getMotionTable().getDirection().get(0).getDestinationRoom() == 0)
                     return "GAME OVER";
                 else return "FORCED";
             } //something is up here! We are dead or we won.
-            return null;
+            else if (move == 0) {
+                return null;
+            } else {
+                return "THIS PASSAGE REQUIRES LEVEL " + Integer.toString(move);
+            }
         } else if(Arrays.asList(this.actionVerbs).contains(inputArray[0])) {
             if(inputArray[0].equals("QUIT")) { return "GAME OVER"; } //time to stop!
             else if(inputArray[0].equals("INVENTORY") && this.player.getInventory().size() == 0) return "INVENTORY IS EMPTY";
             else if(inputArray[0].equals("INVENTORY") && this.player.getInventory().size() > 0) return "THESE OBJECTS ARE IN YOUR INVENTORY:\n" + this.player.getInventory().toString();
             else if(inputArray[0].equals("TAKE") && inputArray.length < 2) return "THE TAKE COMMAND REQUIRES AN OBJECT";
+            else if(inputArray[0].equals("LEVEL") && inputArray.length < 2) {
+                Level level = this.player.getLevel();
+                String xp;
+                if (level.isMaxLevel()) {
+                    xp = Integer.toString(level.getXP());
+                } else {
+                    xp = level.getXP() + "/" + level.getXPToNextLevel();
+                }
+                return "YOU ARE AT LEVEL " + this.player.getLevel().getLevel() + ", AND AT XP " + xp;
+            }
             else if(inputArray[0].equals("DROP") && inputArray.length < 2) return "THE DROP COMMAND REQUIRES AN OBJECT";
             else if(inputArray[0].equals("TAKE") && inputArray.length == 2) {
                 if(this.player.getCurrentRoom().checkIfObjectInRoom(inputArray[1])) {
-                    this.player.takeObject(inputArray[1]);
-                    return "YOU HAVE TAKEN:\n " + inputArray[1];
+                    if (this.player.takeObject(inputArray[1])) {
+                        return "YOU HAVE TAKEN: " + inputArray[1];
+                    } else {
+                        return "YOU CAN'T PICK UP " + inputArray[1] + " AT YOUR CURRENT LEVEL.";
+                    }
                 } else {
-                    return "THIS OBJECT IS NOT HERE:\n " + inputArray[1];
+                    return "THIS OBJECT IS NOT HERE: " + inputArray[1];
                 }
             }
             else if(inputArray[0].equals("DROP") && inputArray.length == 2) {
                 if(this.player.checkIfObjectInInventory(inputArray[1])) {
                     this.player.dropObject(inputArray[1]);
-                    return "YOU HAVE DROPPED:\n " + inputArray[1];
+                    return "YOU HAVE DROPPED: " + inputArray[1];
                 } else {
-                    return "THIS OBJECT IS NOT IN YOUR INVENTORY:\n " + inputArray[1];
+                    return "THIS OBJECT IS NOT IN YOUR INVENTORY: " + inputArray[1];
                 }
             }
         }
