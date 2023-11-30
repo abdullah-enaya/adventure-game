@@ -1,6 +1,7 @@
 package AdventureModel;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -41,7 +42,7 @@ public class AdventureLoader {
 
         int roomNumber;
 
-        String roomFileName = this.adventureName + "/rooms.txt";
+        String roomFileName = this.adventureName + File.separator + "rooms.txt";
         BufferedReader buff = new BufferedReader(new FileReader(roomFileName));
 
         while (buff.ready()) {
@@ -110,7 +111,7 @@ public class AdventureLoader {
     public void parseObjects() throws IOException {
 
         
-        String objectFileName = this.adventureName + "/objects.txt";
+        String objectFileName = this.adventureName + File.separator + "objects.txt";
         BufferedReader buff = new BufferedReader(new FileReader(objectFileName));
 
         while (buff.ready()) {
@@ -147,7 +148,7 @@ public class AdventureLoader {
      * Parse Synonyms File
      */
     public void parseSynonyms() throws IOException {
-        String synonymsFileName = this.adventureName + "/synonyms.txt";
+        String synonymsFileName = this.adventureName + File.separator + "synonyms.txt";
         BufferedReader buff = new BufferedReader(new FileReader(synonymsFileName));
         String line = buff.readLine();
         while(line != null){
