@@ -39,7 +39,7 @@ public class SelectModelView {
 
     /**
      * Adventure Select Model View Constructor
-     * __________________________
+     *
      * Initializes attributes
      */
     public SelectModelView(Stage stage) {
@@ -140,7 +140,7 @@ public class SelectModelView {
 
     /**
      * customizeButton
-     * __________________________
+     *
      *
      * @param inputButton the button to make stylish :)
      * @param w width
@@ -154,7 +154,7 @@ public class SelectModelView {
 
     /**
      * makeButtonAccessible
-     * __________________________
+     *
      * For information about ARIA standards, see
      * https://www.w3.org/WAI/standards-guidelines/aria/
      *
@@ -225,10 +225,18 @@ public class SelectModelView {
         return new AdventureGame(GameModel);
     }
 
+    /**
+     *
+     * @return the current Adventure Game
+     */
     public AdventureGame getAdventureGame() {
         return adventureGame;
     }
 
+    /**
+     *
+     * @return the current Adventure Game View
+     */
     public AdventureGameView getAdventureGameView() {
         return adventureGameView;
     }

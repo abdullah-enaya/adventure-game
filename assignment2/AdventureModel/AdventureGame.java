@@ -16,7 +16,7 @@ public class AdventureGame implements Serializable {
 
     /**
      * Adventure Game Constructor
-     * __________________________
+     *
      * Initializes attributes
      *
      * @param name the name of the adventure
@@ -49,7 +49,7 @@ public class AdventureGame implements Serializable {
 
     /**
      * setUpGame
-     * __________________________
+     *
      *
      * @throws IOException in the case of a file I/O error
      */
@@ -65,7 +65,7 @@ public class AdventureGame implements Serializable {
 
     /**
      * tokenize
-     * __________________________
+     *
      *
      * @param input string from the command line
      * @return a string array of tokens that represents the command.
@@ -88,7 +88,7 @@ public class AdventureGame implements Serializable {
 
     /**
      * movePlayer
-     * __________________________
+     *
      * Moves the player in the given direction, if possible.
      * Return false if the player wins or dies as a result of the move.
      *
@@ -178,7 +178,7 @@ public class AdventureGame implements Serializable {
 
     /**
      * getDirectoryName
-     * __________________________
+     *
      * Getter method for directory 
      * @return directoryName
      */
@@ -188,7 +188,7 @@ public class AdventureGame implements Serializable {
 
     /**
      * getInstructions
-     * __________________________
+     *
      * Getter method for instructions 
      * @return helpText
      */
@@ -198,7 +198,7 @@ public class AdventureGame implements Serializable {
 
     /**
      * getPlayer
-     * __________________________
+     *
      * Getter method for Player 
      */
     public Player getPlayer() {
@@ -207,7 +207,7 @@ public class AdventureGame implements Serializable {
 
     /**
      * getRooms
-     * __________________________
+     *
      * Getter method for rooms 
      * @return map of key value pairs (integer to room)
      */
@@ -217,7 +217,7 @@ public class AdventureGame implements Serializable {
 
     /**
      * getSynonyms
-     * __________________________
+     *
      * Getter method for synonyms 
      * @return map of key value pairs (synonym to command)
      */
@@ -227,7 +227,7 @@ public class AdventureGame implements Serializable {
 
     /**
      * setHelpText
-     * __________________________
+     *
      * Setter method for helpText
      * @param help which is text to set
      */
