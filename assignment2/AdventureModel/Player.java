@@ -19,11 +19,17 @@ public class Player implements Serializable {
     public ArrayList<AdventureObject> inventory;
 
     /**
+     * The level and xp the player is currently at.
+     */
+    private Level level;
+
+    /**
      * Adventure Game Player Constructor
      */
     public Player(Room currentRoom) {
         this.inventory = new ArrayList<AdventureObject>();
         this.currentRoom = currentRoom;
+        this.level = new Level(1, new int[]{50, 100, 150, 200, 250});
     }
 
     /**
@@ -37,8 +43,15 @@ public class Player implements Serializable {
     public boolean takeObject(String object){
         if(this.currentRoom.checkIfObjectInRoom(object)){
             AdventureObject object1 = this.currentRoom.getObject(object);
+            if (this.getLevel().getLevel() < object1.getLevel()) {
+                return false;
+            }
             this.currentRoom.removeGameObject(object1);
             this.addToInventory(object1);
+            if (!object1.getPickedUp()) {
+                this.getLevel().addXP(object1.getXP());
+                object1.setPickedUp();
+            }
             return true;
         } else {
             return false;
@@ -103,6 +116,15 @@ public class Player implements Serializable {
      */
     public Room getCurrentRoom() {
         return this.currentRoom;
+    }
+
+    /**
+     * Getter method for the level attribute.
+     *
+     * @return level object for the player.
+     */
+    public Level getLevel() {
+        return this.level;
     }
 
     /**
