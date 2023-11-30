@@ -142,222 +142,226 @@ public class AdventureGameView {
 
 
         if (this.model.getPlayer().character == null){
-
-            //Here so that on first launch of the game, the players is asked to choose the character
-
-            VBox dwarf = new VBox();
-
-            Image imageDwarf = new Image (new FileInputStream(this.model.getDirectoryName() + File.separator + "characterImages" + File.separator + "mountain dwarf.png"));
-            
-            ImageView imageViewDwarf = new ImageView(imageDwarf);
-            imageViewDwarf.setFitHeight(190);
-            imageViewDwarf.setFitWidth(190);
-
-            Label dwarfLabel = new Label("Dwarf");
-            dwarfLabel.setAlignment(Pos.TOP_CENTER);
-            dwarfLabel.setStyle("-fx-text-fill: white;");
-            dwarfLabel.setFont(new Font("Arial", 16));
-
-            Label descriptionDwarf = new Label("The Dwarf is a tank type class. Born from ironforge, " +
-                                        "the dwarf specializes in taking damage. He has very high hp with low attack.");
-            descriptionDwarf.setWrapText(true);
-            descriptionDwarf.setAlignment(Pos.TOP_CENTER);
-            descriptionDwarf.setStyle("-fx-text-fill: white;");
-            descriptionDwarf.setFont(new Font("Arial", 16));
-
-            dwarf.getChildren().addAll(imageViewDwarf, dwarfLabel, descriptionDwarf);
-            dwarf.setAlignment(Pos.TOP_CENTER);
-
-            VBox mage = new VBox();
-
-            Image imageMage = new Image (new FileInputStream(this.model.getDirectoryName() + File.separator + "characterImages" + File.separator + "pngimg.com - wizard_PNG16.png"));
-            ImageView imageViewMage = new ImageView(imageMage);
-            imageViewMage.setFitHeight(200);
-            imageViewMage.setFitWidth(200);
-
-            Label mageLabel = new Label("Mage");
-            mageLabel.setAlignment(Pos.TOP_CENTER);
-            mageLabel.setStyle("-fx-text-fill: white;");
-            mageLabel.setFont(new Font("Arial", 16));
-
-            Label descriptionMage = new Label("The Mage is an elf with the innate ability to control the elements. Through his practise and elvin blood, the mage specializes in medium attack damage as well as medium health.");
-            descriptionMage.setWrapText(true);
-            descriptionMage.setAlignment(Pos.TOP_CENTER);
-            descriptionMage.setStyle("-fx-text-fill: white;");
-            descriptionMage.setFont(new Font("Arial", 16));
-
-            mage.getChildren().addAll(imageViewMage, mageLabel, descriptionMage);
-            mage.setAlignment(Pos.TOP_CENTER);
-
-            VBox damage = new VBox();
-
-            Image imageDamage = new Image (new FileInputStream(this.model.getDirectoryName() + File.separator + "characterImages" + File.separator + "fart2.png"));
-            ImageView imageViewDamage = new ImageView(imageDamage);
-            imageViewDamage.setFitHeight(200);
-            imageViewDamage.setFitWidth(200);
-
-            Label damageLabel = new Label("Damage");
-            damageLabel.setAlignment(Pos.TOP_CENTER);
-            damageLabel.setStyle("-fx-text-fill: white;");
-            damageLabel.setFont(new Font("Arial", 16));
-
-            Label descriptionDamage = new Label("Natural born killers, the damage is a human assassin raised from a young age to kill. The damage class specializes in high damage but has low hp.");
-            descriptionDamage.setWrapText(true);
-            descriptionDamage.setAlignment(Pos.TOP_CENTER);
-            descriptionDamage.setStyle("-fx-text-fill: white;");
-            descriptionDamage.setFont(new Font("Arial", 16));
-
-            damage.getChildren().addAll(imageViewDamage, damageLabel, descriptionDamage);
-            damage.setAlignment(Pos.TOP_CENTER);
-
-
-            HBox characters = new HBox();
-            characters.getChildren().addAll(mage, damage, dwarf);
-            characters.setAlignment(Pos.TOP_CENTER);
-            characters.setSpacing(100);
-            mage.setMaxWidth(100);
-            HBox.setHgrow(mage, Priority.NEVER);
-            HBox.setHgrow(dwarf, Priority.ALWAYS);
-            HBox.setHgrow(damage, Priority.ALWAYS);
-
-            gridPane.add(characters, 0, 0, 3, 2);
-
-            inputTextField = new TextField();
-            inputTextField.setFont(new Font("Arial", 16));
-            inputTextField.setFocusTraversable(true);
-
-            inputTextField.setAccessibleRole(AccessibleRole.TEXT_AREA);
-            inputTextField.setAccessibleRoleDescription("Text Entry Box");
-            inputTextField.setAccessibleText("Enter commands in this box.");
-            inputTextField.setAccessibleHelp("This is the area in which you can enter commands you would like to play.  Enter a command and hit return to continue.");
-            addTextHandlingEvent2(); //attach an event to this input field
-
-            Label commandLabel = new Label("Type the character you would like to play!");
-            commandLabel.setStyle("-fx-text-fill: white;");
-            commandLabel.setFont(new Font("Arial", 16));
-
-            VBox textEntry = new VBox();
-            textEntry.setStyle("-fx-background-color: #000000;");
-            textEntry.setPadding(new Insets(20, 20, 20, 20));
-            textEntry.getChildren().addAll(commandLabel, inputTextField);
-            textEntry.setSpacing(10);
-            textEntry.setAlignment(Pos.TOP_CENTER);
-            gridPane.add( textEntry, 0, 2, 3, 1 );
-
-            // Render everything
-            var scene = new Scene( gridPane ,  1000, 800);
-            scene.setFill(Color.BLACK);
-            this.stage.setScene(scene);
-            this.stage.setResizable(false);
-            this.stage.show();
-
+            initCharacterUI();
+            return;
         }
 
-        else{
+        // Buttons
+        saveButton = new Button("Save");
+        saveButton.setId("Save");
+        customizeButton(saveButton, 100, 50);
+        makeButtonAccessible(saveButton, "Save Button", "This button saves the game.", "This button saves the game. Click it in order to save your current progress, so you can play more later.");
+        addSaveEvent();
 
-            // Buttons
-            saveButton = new Button("Save");
-            saveButton.setId("Save");
-            customizeButton(saveButton, 100, 50);
-            makeButtonAccessible(saveButton, "Save Button", "This button saves the game.", "This button saves the game. Click it in order to save your current progress, so you can play more later.");
-            addSaveEvent();
+        loadButton = new Button("Load");
+        loadButton.setId("Load");
+        customizeButton(loadButton, 100, 50);
+        makeButtonAccessible(loadButton, "Load Button", "This button loads a game from a file.", "This button loads the game from a file. Click it in order to load a game that you saved at a prior date.");
+        addLoadEvent();
 
-            loadButton = new Button("Load");
-            loadButton.setId("Load");
-            customizeButton(loadButton, 100, 50);
-            makeButtonAccessible(loadButton, "Load Button", "This button loads a game from a file.", "This button loads the game from a file. Click it in order to load a game that you saved at a prior date.");
-            addLoadEvent();
+        helpButton = new Button("Instructions");
+        helpButton.setId("Instructions");
+        customizeButton(helpButton, 200, 50);
+        makeButtonAccessible(helpButton, "Help Button", "This button gives game instructions.", "This button gives instructions on the game controls. Click it to learn how to play.");
+        addInstructionEvent();
 
-            helpButton = new Button("Instructions");
-            helpButton.setId("Instructions");
-            customizeButton(helpButton, 200, 50);
-            makeButtonAccessible(helpButton, "Help Button", "This button gives game instructions.", "This button gives instructions on the game controls. Click it to learn how to play.");
-            addInstructionEvent();
+        deleteButton = new Button("Delete");
+        deleteButton.setId("Delete");
+        customizeButton(deleteButton, 100, 50);
+        makeButtonAccessible(deleteButton, "Delete Button", "This button deletes a game from a file.", "This button deletes the game from a file. Click it in order to delete a game that you saved at a prior date.");
+        addDeleteEvent();
 
-            deleteButton = new Button("Delete");
-            deleteButton.setId("Delete");
-            customizeButton(deleteButton, 100, 50);
-            makeButtonAccessible(deleteButton, "Delete Button", "This button deletes a game from a file.", "This button deletes the game from a file. Click it in order to delete a game that you saved at a prior date.");
-            addDeleteEvent();
+        HBox topButtons = new HBox();
+        topButtons.getChildren().addAll(saveButton, loadButton, deleteButton, helpButton);
+        topButtons.setSpacing(10);
+        topButtons.setAlignment(Pos.CENTER);
 
-            HBox topButtons = new HBox();
-            topButtons.getChildren().addAll(saveButton, loadButton, deleteButton, helpButton);
-            topButtons.setSpacing(10);
-            topButtons.setAlignment(Pos.CENTER);
+        inputTextField = new TextField();
+        inputTextField.setFont(new Font("Arial", 16));
+        inputTextField.setFocusTraversable(true);
 
-            inputTextField = new TextField();
-            inputTextField.setFont(new Font("Arial", 16));
-            inputTextField.setFocusTraversable(true);
+        inputTextField.setAccessibleRole(AccessibleRole.TEXT_AREA);
+        inputTextField.setAccessibleRoleDescription("Text Entry Box");
+        inputTextField.setAccessibleText("Enter commands in this box.");
+        inputTextField.setAccessibleHelp("This is the area in which you can enter commands you would like to play.  Enter a command and hit return to continue.");
+        addTextHandlingEvent(); //attach an event to this input field
 
-            inputTextField.setAccessibleRole(AccessibleRole.TEXT_AREA);
-            inputTextField.setAccessibleRoleDescription("Text Entry Box");
-            inputTextField.setAccessibleText("Enter commands in this box.");
-            inputTextField.setAccessibleHelp("This is the area in which you can enter commands you would like to play.  Enter a command and hit return to continue.");
-            addTextHandlingEvent(); //attach an event to this input field
+        //labels for inventory and room items
+        Label objLabel =  new Label("Objects in Room");
+        objLabel.setAlignment(Pos.CENTER);
+        objLabel.setStyle("-fx-text-fill: white;");
+        objLabel.setFont(new Font("Arial", 16));
 
-            //labels for inventory and room items
-            Label objLabel =  new Label("Objects in Room");
-            objLabel.setAlignment(Pos.CENTER);
-            objLabel.setStyle("-fx-text-fill: white;");
-            objLabel.setFont(new Font("Arial", 16));
+        Label invLabel =  new Label("Your Inventory");
+        invLabel.setAlignment(Pos.CENTER);
+        invLabel.setStyle("-fx-text-fill: white;");
+        invLabel.setFont(new Font("Arial", 16));
 
-            Label invLabel =  new Label("Your Inventory");
-            invLabel.setAlignment(Pos.CENTER);
-            invLabel.setStyle("-fx-text-fill: white;");
-            invLabel.setFont(new Font("Arial", 16));
+        //add all the widgets to the GridPane
+        gridPane.add( objLabel, 0, 0, 1, 1 );  // Add label
+        gridPane.add( topButtons, 1, 0, 1, 1 );  // Add buttons
+        gridPane.add( invLabel, 2, 0, 1, 1 );  // Add label
 
-            //add all the widgets to the GridPane
-            gridPane.add( objLabel, 0, 0, 1, 1 );  // Add label
-            gridPane.add( topButtons, 1, 0, 1, 1 );  // Add buttons
-            gridPane.add( invLabel, 2, 0, 1, 1 );  // Add label
+        Label commandLabel = new Label("What would you like to do?");
+        commandLabel.setStyle("-fx-text-fill: white;");
+        commandLabel.setFont(new Font("Arial", 16));
 
-            Label commandLabel = new Label("What would you like to do?");
-            commandLabel.setStyle("-fx-text-fill: white;");
-            commandLabel.setFont(new Font("Arial", 16));
+        // Level and XP bar
+        levelLabel = new Label( "You are at Level (" + this.model.player.getLevel().getLevel() + ")    |    XP: ");
+        levelLabel.setStyle("-fx-text-fill: white;");
+        levelLabel.setFont(new Font("Arial", 16));
 
-            // Level and XP bar
-            levelLabel = new Label( "You are at Level (" + this.model.player.getLevel().getLevel() + ")    |    XP: ");
-            levelLabel.setStyle("-fx-text-fill: white;");
-            levelLabel.setFont(new Font("Arial", 16));
+        xpBar = new ProgressBar();
+        xpBar.setMaxWidth(Double.MAX_VALUE);
 
-            xpBar = new ProgressBar();
-            xpBar.setMaxWidth(Double.MAX_VALUE);
+        xpLabel = new Label();
+        xpLabel.setStyle("-fx-text-fill: white;");
+        xpLabel.setFont(new Font("Arial", 16));
 
-            xpLabel = new Label();
-            xpLabel.setStyle("-fx-text-fill: white;");
-            xpLabel.setFont(new Font("Arial", 16));
+        HBox levelView = new HBox();
+        levelView.setStyle("-fx-background-color: #000000;");
+        levelView.setPadding(new Insets(20, 20, 20, 20));
+        levelView.getChildren().addAll(levelLabel, xpBar, xpLabel);
+        HBox.setHgrow(xpBar, Priority.ALWAYS);
+        levelView.setSpacing(10);
+        gridPane.add( levelView, 0, 2, 3, 1 );
 
-            HBox levelView = new HBox();
-            levelView.setStyle("-fx-background-color: #000000;");
-            levelView.setPadding(new Insets(20, 20, 20, 20));
-            levelView.getChildren().addAll(levelLabel, xpBar, xpLabel);
-            HBox.setHgrow(xpBar, Priority.ALWAYS);
-            levelView.setSpacing(10);
-            gridPane.add( levelView, 0, 2, 3, 1 );
+        updateScene("You have selected: " + this.model.player.character.title); //method displays an image and whatever text is supplied
+        PauseTransition pause = new PauseTransition(Duration.seconds(3));
+        pause.setOnFinished(actionEvent -> updateScene(null));
+        pause.play();
+        updateItems(); //update items shows inventory and objects in rooms
 
-            updateScene("You have selected: " + this.model.player.character.title); //method displays an image and whatever text is supplied
-            PauseTransition pause = new PauseTransition(Duration.seconds(3));
-            pause.setOnFinished(actionEvent -> updateScene(null));
-            pause.play();
-            updateItems(); //update items shows inventory and objects in rooms
+        // adding the text area and submit button to a VBox
+        VBox textEntry = new VBox();
+        textEntry.setStyle("-fx-background-color: #000000;");
+        textEntry.setPadding(new Insets(20, 20, 20, 20));
+        textEntry.getChildren().addAll(commandLabel, inputTextField);
+        textEntry.setSpacing(10);
+        textEntry.setAlignment(Pos.CENTER);
+        gridPane.add( textEntry, 0, 2, 3, 1 );
 
-            // adding the text area and submit button to a VBox
-            VBox textEntry = new VBox();
-            textEntry.setStyle("-fx-background-color: #000000;");
-            textEntry.setPadding(new Insets(20, 20, 20, 20));
-            textEntry.getChildren().addAll(commandLabel, inputTextField);
-            textEntry.setSpacing(10);
-            textEntry.setAlignment(Pos.CENTER);
-            gridPane.add( textEntry, 0, 2, 3, 1 );
+        // Render everything
+        var scene = new Scene( gridPane ,  1000, 800);
+        scene.setFill(Color.BLACK);
+        this.stage.setScene(scene);
+        this.stage.setResizable(false);
+        this.stage.show();
+    }
 
-            // Render everything
-            var scene = new Scene( gridPane ,  1000, 800);
-            scene.setFill(Color.BLACK);
-            this.stage.setScene(scene);
-            this.stage.setResizable(false);
-            this.stage.show();
-        }
+    /**
+     *  For first launch of the game, initialize UI for character selection.
+     */
+    private void initCharacterUI() throws FileNotFoundException {
 
+        VBox dwarf = new VBox();
+
+        Image imageDwarf = new Image (new FileInputStream("file:Assets" + File.separator + "characterImages" + File.separator + "Dwarf.png"));
+
+        ImageView imageViewDwarf = new ImageView(imageDwarf);
+        imageViewDwarf.setPreserveRatio(true);
+        imageViewDwarf.setFitWidth(190);
+
+        Label dwarfLabel = new Label("Dwarf");
+        dwarfLabel.setAlignment(Pos.TOP_CENTER);
+        dwarfLabel.setStyle("-fx-text-fill: white;");
+        dwarfLabel.setFont(new Font("Arial", 16));
+
+        Label descriptionDwarf = new Label("The Dwarf is a tank type class. Born from ironforge, " +
+                                    "the dwarf specializes in taking damage. He has very high hp with low attack.");
+        descriptionDwarf.setWrapText(true);
+        descriptionDwarf.setAlignment(Pos.TOP_CENTER);
+        descriptionDwarf.setStyle("-fx-text-fill: white;");
+        descriptionDwarf.setFont(new Font("Arial", 16));
+
+        dwarf.setSpacing(20);
+        dwarf.getChildren().addAll(imageViewDwarf, dwarfLabel, descriptionDwarf);
+        dwarf.setAlignment(Pos.TOP_CENTER);
+
+        VBox mage = new VBox();
+
+        Image imageMage = new Image (new FileInputStream( "file:Assets" + File.separator + "characterImages" + File.separator + "Mage.png"));
+        ImageView imageViewMage = new ImageView(imageMage);
+        imageViewMage.setPreserveRatio(true);
+        imageViewMage.setFitWidth(200);
+
+        Label mageLabel = new Label("Mage");
+        mageLabel.setAlignment(Pos.TOP_CENTER);
+        mageLabel.setStyle("-fx-text-fill: white;");
+        mageLabel.setFont(new Font("Arial", 16));
+
+        Label descriptionMage = new Label("The Mage is an elf with the innate ability to control the elements. Through his practise and elvin blood, the mage specializes in medium attack damage as well as medium health.");
+        descriptionMage.setWrapText(true);
+        descriptionMage.setAlignment(Pos.TOP_CENTER);
+        descriptionMage.setStyle("-fx-text-fill: white;");
+        descriptionMage.setFont(new Font("Arial", 16));
+
+        mage.setSpacing(20);
+        mage.getChildren().addAll(imageViewMage, mageLabel, descriptionMage);
+        mage.setAlignment(Pos.TOP_CENTER);
+
+        VBox damage = new VBox();
+
+        Image imageDamage = new Image (new FileInputStream("file:Assets" + File.separator + "characterImages" + File.separator + "Damage.png"));
+        ImageView imageViewDamage = new ImageView(imageDamage);
+        imageViewDamage.setPreserveRatio(true);
+        imageViewDamage.setFitWidth(200);
+
+        Label damageLabel = new Label("Damage");
+        damageLabel.setAlignment(Pos.TOP_CENTER);
+        damageLabel.setStyle("-fx-text-fill: white;");
+        damageLabel.setFont(new Font("Arial", 16));
+
+        Label descriptionDamage = new Label("Natural born killers, the damage is a human assassin raised from a young age to kill. The damage class specializes in high damage but has low hp.");
+        descriptionDamage.setWrapText(true);
+        descriptionDamage.setAlignment(Pos.TOP_CENTER);
+        descriptionDamage.setStyle("-fx-text-fill: white;");
+        descriptionDamage.setFont(new Font("Arial", 16));
+
+        damage.setSpacing(20);
+        damage.getChildren().addAll(imageViewDamage, damageLabel, descriptionDamage);
+        damage.setAlignment(Pos.TOP_CENTER);
+
+
+        HBox characters = new HBox();
+        characters.getChildren().addAll(mage, damage, dwarf);
+        characters.setAlignment(Pos.TOP_CENTER);
+        characters.setSpacing(100);
+        mage.setMaxWidth(100);
+        HBox.setHgrow(mage, Priority.NEVER);
+        HBox.setHgrow(dwarf, Priority.ALWAYS);
+        HBox.setHgrow(damage, Priority.ALWAYS);
+
+        gridPane.add(characters, 0, 0, 3, 2);
+
+        inputTextField = new TextField();
+        inputTextField.setFont(new Font("Arial", 16));
+        inputTextField.setFocusTraversable(true);
+
+        inputTextField.setAccessibleRole(AccessibleRole.TEXT_AREA);
+        inputTextField.setAccessibleRoleDescription("Text Entry Box");
+        inputTextField.setAccessibleText("Enter commands in this box.");
+        inputTextField.setAccessibleHelp("This is the area in which you can enter commands you would like to play.  Enter a command and hit return to continue.");
+        addTextHandlingEvent2(); //attach an event to this input field
+
+        Label commandLabel = new Label("Type the character you would like to play!");
+        commandLabel.setStyle("-fx-text-fill: white;");
+        commandLabel.setFont(new Font("Arial", 16));
+
+        VBox textEntry = new VBox();
+        textEntry.setStyle("-fx-background-color: #000000;");
+        textEntry.setPadding(new Insets(20, 20, 20, 20));
+        textEntry.getChildren().addAll(commandLabel, inputTextField);
+        textEntry.setSpacing(10);
+        textEntry.setAlignment(Pos.TOP_CENTER);
+        gridPane.add( textEntry, 0, 2, 3, 1 );
+
+        // Render everything
+        var scene = new Scene( gridPane ,  1000, 800);
+        scene.setFill(Color.BLACK);
+        this.stage.setScene(scene);
+        this.stage.setResizable(false);
+        this.stage.show();
     }
 
 
@@ -618,7 +622,7 @@ public class AdventureGameView {
     private void getRoomImage() {
 
         int roomNumber = this.model.getPlayer().getCurrentRoom().getRoomNumber();
-        String roomImage = "file:" + this.model.getDirectoryName() + "/room-images/" + roomNumber + ".png";
+        String roomImage = "file:" + this.model.getDirectoryName() + File.separator + "room-images/" + File.separator + roomNumber + ".png";
 
         Image roomImageFile = new Image(roomImage);
         roomImageView = new ImageView(roomImageFile);
