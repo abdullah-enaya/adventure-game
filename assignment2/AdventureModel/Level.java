@@ -2,11 +2,13 @@ package AdventureModel;
 
 import Exceptions.NegativeXPException;
 
+import java.io.Serializable;
+
 /**
  * Class Level.
  * This class stores the level and XP of the player, and handles updates to level and xp.
  */
-public class Level {
+public class Level implements Serializable {
     /**
      * The xp of the player after the current level.
      */
