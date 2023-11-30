@@ -239,7 +239,7 @@ public class AdventureGameView {
         textEntry.getChildren().addAll(commandLabel, inputTextField);
         textEntry.setSpacing(10);
         textEntry.setAlignment(Pos.CENTER);
-        gridPane.add( textEntry, 0, 2, 3, 1 );
+        gridPane.add( textEntry, 0, 3, 3, 1 );
 
         // Render everything
         var scene = new Scene( gridPane ,  1000, 800);
@@ -256,7 +256,7 @@ public class AdventureGameView {
 
         VBox dwarf = new VBox();
 
-        Image imageDwarf = new Image (new FileInputStream("file:Assets" + File.separator + "characterImages" + File.separator + "Dwarf.png"));
+        Image imageDwarf = new Image (new FileInputStream("Assets" + File.separator + "characterImages" + File.separator + "Dwarf.png"));
 
         ImageView imageViewDwarf = new ImageView(imageDwarf);
         imageViewDwarf.setPreserveRatio(true);
@@ -280,7 +280,7 @@ public class AdventureGameView {
 
         VBox mage = new VBox();
 
-        Image imageMage = new Image (new FileInputStream( "file:Assets" + File.separator + "characterImages" + File.separator + "Mage.png"));
+        Image imageMage = new Image (new FileInputStream( "Assets" + File.separator + "characterImages" + File.separator + "Mage.png"));
         ImageView imageViewMage = new ImageView(imageMage);
         imageViewMage.setPreserveRatio(true);
         imageViewMage.setFitWidth(200);
@@ -302,7 +302,7 @@ public class AdventureGameView {
 
         VBox damage = new VBox();
 
-        Image imageDamage = new Image (new FileInputStream("file:Assets" + File.separator + "characterImages" + File.separator + "Damage.png"));
+        Image imageDamage = new Image (new FileInputStream("Assets" + File.separator + "characterImages" + File.separator + "Damage.png"));
         ImageView imageViewDamage = new ImageView(imageDamage);
         imageViewDamage.setPreserveRatio(true);
         imageViewDamage.setFitWidth(200);
@@ -424,7 +424,9 @@ public class AdventureGameView {
         });
     }
 
-    //second text handling event for the initialization of character prompt
+    /**
+     * second text handling event for the initialization of character prompt
+      */
     private void addTextHandlingEvent2(){
         this.inputTextField.addEventHandler(KeyEvent.KEY_PRESSED, (keyEvent) -> {
             if (keyEvent.getCode().equals(KeyCode.ENTER)) {
@@ -440,19 +442,19 @@ public class AdventureGameView {
         });
     }
 
-    //second submit event to handle the character creation prompt
+    /**
+     * second submit event to handle the character creation prompt
+     */
     private void submitEvent2(String text) throws IOException {
-        text = text.strip(); //get rid of white space
+        text = text.strip().toUpperCase(); //get rid of white space
         stopArticulation(); //if speaking, stop is
 
         CharacterFactory characterFactory = new CharacterFactory();
-
         Character character = characterFactory.getCharacter(text);
-
-        this.model.getPlayer().character = character;
-
-        intiUI();
-
+        if (character != null) {
+            this.model.getPlayer().character = character;
+            intiUI();
+        }
     }
 
 
@@ -622,7 +624,7 @@ public class AdventureGameView {
     private void getRoomImage() {
 
         int roomNumber = this.model.getPlayer().getCurrentRoom().getRoomNumber();
-        String roomImage = "file:" + this.model.getDirectoryName() + File.separator + "room-images/" + File.separator + roomNumber + ".png";
+        String roomImage = this.model.getDirectoryName() + File.separator + "room-images/" + File.separator + roomNumber + ".png";
 
         Image roomImageFile = new Image(roomImage);
         roomImageView = new ImageView(roomImageFile);
@@ -647,7 +649,7 @@ public class AdventureGameView {
 
         //write some code here to add images of objects in a given room to the objectsInRoom Vbox
         for (AdventureObject object: this.model.player.getCurrentRoom().objectsInRoom) {
-            Image image = new Image("file:" + this.model.getDirectoryName() + File.separator + "objectImages" + File.separator + object.getName() + ".jpg");
+            Image image = new Image(this.model.getDirectoryName() + File.separator + "objectImages" + File.separator + object.getName() + ".jpg");
             ImageView imageView = new ImageView();
             imageView.setImage(image);
             imageView.setFitWidth(100);
@@ -667,7 +669,7 @@ public class AdventureGameView {
 
         //write some code here to add images of objects in a player's inventory room to the objectsInInventory Vbox
         for (AdventureObject object: this.model.player.inventory) {
-            Image image = new Image("file:" + this.model.getDirectoryName() + File.separator + "objectImages" + File.separator + object.getName() + ".jpg");
+            Image image = new Image(this.model.getDirectoryName() + File.separator + "objectImages" + File.separator + object.getName() + ".jpg");
             ImageView imageView = new ImageView();
             imageView.setImage(image);
             imageView.setFitWidth(100);
@@ -798,8 +800,7 @@ public class AdventureGameView {
         String adventureName = this.model.getDirectoryName();
         String roomName = this.model.getPlayer().getCurrentRoom().getRoomName();
 
-        if (!this.model.getPlayer().getCurrentRoom().getVisited()) musicFile = "./" + adventureName + "/sounds/" + roomName.toLowerCase() + "-long.mp3" ;
-        else musicFile = "./" + adventureName + "/sounds/" + roomName.toLowerCase() + "-short.mp3" ;
+        musicFile = "./" + adventureName + "/sounds/" + roomName.toLowerCase() + "-long.mp3";
         musicFile = musicFile.replace(" ","-");
 
         Media sound = new Media(new File(musicFile).toURI().toString());
