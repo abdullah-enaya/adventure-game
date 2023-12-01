@@ -143,13 +143,22 @@ public class DeleteView {
      */
     public void deleteGame(String GameFile) throws IOException, ClassNotFoundException {
         File file = new File(GameFile);
-
+        if (!file.exists()) {
+            selectGameLabel.setText("Deletion cancelled!");
+            this.adventureGameView.updateScene("");
+            getFiles(GameList); //get files for file selector
+            return;
+        }
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Delete " + GameFile + " ?", ButtonType.YES,  ButtonType.CANCEL);
         alert.showAndWait();
 
         if (alert.getResult() == ButtonType.YES) {
-            file.delete();
-            selectGameLabel.setText("Successfully deleted the game!");
+            boolean deleted = file.delete();
+            if (deleted) {
+                selectGameLabel.setText("Successfully deleted the game!");
+            } else {
+                selectGameLabel.setText("Deletion cancelled!");
+            }
         } else {
             selectGameLabel.setText("Deletion cancelled!");
         }
