@@ -2,6 +2,7 @@ package AdventureModel;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.StringJoiner;
 
 /**
@@ -42,18 +43,24 @@ public class Room implements Serializable {
     private boolean isVisited;
 
     /**
+     * XP given to the player on first visit to the room
+     */
+    private int xp;
+
+    /**
      * AdvGameRoom constructor.
      *
      * @param roomName: The name of the room.
      * @param roomNumber: The number of the room.
      * @param roomDescription: The description of the room.
      */
-    public Room(String roomName, int roomNumber, String roomDescription, String adventureName){
+    public Room(String roomName, int roomNumber, String roomDescription, String adventureName, int xp){
         this.roomName = roomName;
         this.roomNumber = roomNumber;
         this.roomDescription = roomDescription;
         this.adventureName = adventureName;
         this.isVisited = false;
+        this.xp = xp;
     }
 
 
@@ -80,9 +87,14 @@ public class Room implements Serializable {
      * @return delimited string of possible moves
      */
     public String getCommands() {
+        HashSet<String> commandsSet = new HashSet<>();
         StringJoiner commands = new StringJoiner(", ");
         for (Passage passage: this.motionTable.passageTable) {
-            commands.add(passage.getDirection());
+            String direction = passage.getDirection();
+            if (!commandsSet.contains(direction)) {
+                commandsSet.add(direction);
+                commands.add(direction);
+            }
         }
         return commands.toString();
     }
@@ -129,7 +141,7 @@ public class Room implements Serializable {
      * Getter for returning an AdventureObject with a given name
      *
      * @param objectName: Object name to find in the room
-     * @return: AdventureObject
+     * @return AdventureObject
      */
     public AdventureObject getObject(String objectName){
         for(int i = 0; i<objectsInRoom.size();i++){
@@ -141,7 +153,7 @@ public class Room implements Serializable {
     /**
      * Getter method for the number attribute.
      *
-     * @return: number of the room
+     * @return number of the room
      */
     public int getRoomNumber(){
         return this.roomNumber;
@@ -170,7 +182,7 @@ public class Room implements Serializable {
     /**
      * Getter method for the visit attribute.
      *
-     * @return: visit status of the room
+     * @return visit status of the room
      */
     public boolean getVisited(){
         return this.isVisited;
@@ -180,10 +192,19 @@ public class Room implements Serializable {
     /**
      * Getter method for the motionTable attribute.
      *
-     * @return: motion table of the room
+     * @return motion table of the room
      */
     public PassageTable getMotionTable(){
         return this.motionTable;
+    }
+
+    /**
+     * Getter method for the xp attribute.
+     *
+     * @return XP that the room gives on first visit.
+     */
+    public int getXP(){
+        return this.xp;
     }
 
 

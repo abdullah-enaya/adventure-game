@@ -25,6 +25,21 @@ public class AdventureObject implements Serializable {
     private Room location = null;
 
     /**
+     * The xp when this object is first picked up.
+     */
+    private int xp;
+
+    /**
+     * The level required to pick up this object.
+     */
+    private int level;
+
+    /**
+     * True if this item has been picked up before.
+     */
+    private boolean pickedUp;
+
+    /**
      * Adventure Object Constructor
      * ___________________________
      * This constructor sets the name, description, and location of the object.
@@ -33,10 +48,13 @@ public class AdventureObject implements Serializable {
      * @param description One line description of the Object.
      * @param location The location of the Object in the game.
      */
-    public AdventureObject(String name, String description, Room location){
+    public AdventureObject(String name, String description, Room location, int xp, int level){
         this.objectName = name;
         this.description = description;
         this.location = location;
+        this.xp = xp;
+        this.level = level;
+        this.pickedUp = false;
     }
 
     /**
@@ -68,4 +86,38 @@ public class AdventureObject implements Serializable {
         return this.location;
     }
 
+    /**
+     * Getter method for the xp attribute.
+     *
+     * @return XP that the room gives on first visit.
+     */
+    public int getXP(){
+        return this.xp;
+    }
+
+    /**
+     * Returns the level required to access this object.
+     *
+     * @return The level required to access this object.
+     */
+    public int getLevel() {
+        return this.level;
+    }
+
+
+    /**
+     * Getter method for the xp attribute.
+     *
+     * @return XP that the room gives on first visit.
+     */
+    public boolean getPickedUp(){
+        return this.pickedUp;
+    }
+
+    /**
+     * Set the item to picked up.
+     */
+    public void setPickedUp(){
+        this.pickedUp = true;
+    }
 }

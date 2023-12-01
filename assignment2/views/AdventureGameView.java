@@ -2,9 +2,19 @@ package views;
 
 import AdventureModel.AdventureGame;
 import AdventureModel.AdventureObject;
+import AdventureModel.Player;
+import AdventureModel.character.Character;
+import AdventureModel.character.CharacterFactory;
+import AdventureModel.character.Damage;
+import AdventureModel.character.Mage;
+import AdventureModel.character.Tank;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
+import javafx.beans.binding.DoubleBinding;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.ObservableList;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -18,6 +28,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.layout.*;
 import javafx.scene.input.KeyEvent; //you will need these!
 import javafx.scene.input.KeyCode;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
@@ -26,32 +37,47 @@ import javafx.util.Duration;
 import javafx.event.EventHandler; //you will need this too!
 import javafx.scene.AccessibleRole;
 
+import javax.swing.text.View;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
+import java.io.*;
+
+import javafx.application.Application;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Class AdventureGameView.
  *
- * This is the Class that will visualize your model.
- * You are asked to demo your visualization via a Zoom
- * recording. Place a link to your recording below.
+ * This is the Class that will visualize the model.
  *
- * YOUTUBE LINK: https://youtu.be/dnSDB22MBsE
  */
 public class AdventureGameView {
 
     AdventureGame model; //model of the game
     Stage stage; //stage on which all is rendered
-    Button saveButton, loadButton, helpButton; //buttons
+    Button saveButton, loadButton, helpButton, deleteButton; //buttons
     Boolean helpToggle = false; //is help on display?
 
-    GridPane gridPane = new GridPane(); //to hold images and buttons
+    GridPane gridPane; //to hold images and buttons
     Label roomDescLabel = new Label(); //to hold room description and/or instructions
     VBox objectsInRoom = new VBox(); //to hold room items
     VBox objectsInInventory = new VBox(); //to hold inventory items
     ImageView roomImageView; //to hold room image
     TextField inputTextField; //for user input
-
+    Label levelLabel, xpLabel;
+    ProgressBar xpBar;
     private MediaPlayer mediaPlayer; //to play audio
     private boolean mediaPlaying; //to know if the audio is playing
 
@@ -60,20 +86,29 @@ public class AdventureGameView {
      * __________________________
      * Initializes attributes
      */
-    public AdventureGameView(AdventureGame model, Stage stage) {
+    public AdventureGameView(AdventureGame model, Stage stage) throws FileNotFoundException {
         this.model = model;
         this.stage = stage;
         intiUI();
     }
 
     /**
+     * Adventure Game View Bare Constructor
+     * __________________________
+     * Initializes only stage, model still needs to be set and intiUI called.
+     */
+    public AdventureGameView(Stage stage) {
+        this.stage = stage;
+    }
+
+    /**
      * Initialize the UI
      */
-    public void intiUI() {
+    public void intiUI() throws FileNotFoundException {
 
         // setting up the stage
-        this.stage.setTitle("enayaabd's Adventure Game"); //Replace <YOUR UTORID> with your UtorID
-
+        this.stage.setTitle("Group 74's Adventure Game"); //Replace <YOUR UTORID> with your UtorID
+        this.gridPane = new GridPane();
         //Inventory + Room items
         objectsInInventory.setSpacing(10);
         objectsInInventory.setAlignment(Pos.TOP_CENTER);
@@ -103,7 +138,13 @@ public class AdventureGameView {
         row3.setVgrow( Priority.SOMETIMES );
 
         gridPane.getColumnConstraints().addAll( column1 , column2 , column1 );
-        gridPane.getRowConstraints().addAll( row1 , row2 , row1 );
+        gridPane.getRowConstraints().addAll( row1 , row2 , row1, row1 );
+
+
+        if (this.model.getPlayer().character == null){
+            initCharacterUI();
+            return;
+        }
 
         // Buttons
         saveButton = new Button("Save");
@@ -124,8 +165,14 @@ public class AdventureGameView {
         makeButtonAccessible(helpButton, "Help Button", "This button gives game instructions.", "This button gives instructions on the game controls. Click it to learn how to play.");
         addInstructionEvent();
 
+        deleteButton = new Button("Delete");
+        deleteButton.setId("Delete");
+        customizeButton(deleteButton, 100, 50);
+        makeButtonAccessible(deleteButton, "Delete Button", "This button deletes a game from a file.", "This button deletes the game from a file. Click it in order to delete a game that you saved at a prior date.");
+        addDeleteEvent();
+
         HBox topButtons = new HBox();
-        topButtons.getChildren().addAll(saveButton, helpButton, loadButton);
+        topButtons.getChildren().addAll(saveButton, loadButton, deleteButton, helpButton);
         topButtons.setSpacing(10);
         topButtons.setAlignment(Pos.CENTER);
 
@@ -159,7 +206,30 @@ public class AdventureGameView {
         commandLabel.setStyle("-fx-text-fill: white;");
         commandLabel.setFont(new Font("Arial", 16));
 
-        updateScene(""); //method displays an image and whatever text is supplied
+        // Level and XP bar
+        levelLabel = new Label( "You are at Level (" + this.model.player.getLevel().getLevel() + ")    |    XP: ");
+        levelLabel.setStyle("-fx-text-fill: white;");
+        levelLabel.setFont(new Font("Arial", 16));
+
+        xpBar = new ProgressBar();
+        xpBar.setMaxWidth(Double.MAX_VALUE);
+
+        xpLabel = new Label();
+        xpLabel.setStyle("-fx-text-fill: white;");
+        xpLabel.setFont(new Font("Arial", 16));
+
+        HBox levelView = new HBox();
+        levelView.setStyle("-fx-background-color: #000000;");
+        levelView.setPadding(new Insets(20, 20, 20, 20));
+        levelView.getChildren().addAll(levelLabel, xpBar, xpLabel);
+        HBox.setHgrow(xpBar, Priority.ALWAYS);
+        levelView.setSpacing(10);
+        gridPane.add( levelView, 0, 2, 3, 1 );
+
+        updateScene("You have selected: " + this.model.player.character.title); //method displays an image and whatever text is supplied
+        PauseTransition pause = new PauseTransition(Duration.seconds(3));
+        pause.setOnFinished(actionEvent -> updateScene(null));
+        pause.play();
         updateItems(); //update items shows inventory and objects in rooms
 
         // adding the text area and submit button to a VBox
@@ -169,6 +239,121 @@ public class AdventureGameView {
         textEntry.getChildren().addAll(commandLabel, inputTextField);
         textEntry.setSpacing(10);
         textEntry.setAlignment(Pos.CENTER);
+        gridPane.add( textEntry, 0, 3, 3, 1 );
+
+        // Render everything
+        var scene = new Scene( gridPane ,  1000, 800);
+        scene.setFill(Color.BLACK);
+        this.stage.setScene(scene);
+        this.stage.setResizable(false);
+        this.stage.show();
+    }
+
+    /**
+     *  For first launch of the game, initialize UI for character selection.
+     */
+    private void initCharacterUI() throws FileNotFoundException {
+
+        VBox dwarf = new VBox();
+
+        Image imageDwarf = new Image (new FileInputStream("Assets" + File.separator + "characterImages" + File.separator + "Dwarf.png"));
+
+        ImageView imageViewDwarf = new ImageView(imageDwarf);
+        imageViewDwarf.setPreserveRatio(true);
+        imageViewDwarf.setFitWidth(190);
+
+        Label dwarfLabel = new Label("Dwarf");
+        dwarfLabel.setAlignment(Pos.TOP_CENTER);
+        dwarfLabel.setStyle("-fx-text-fill: white;");
+        dwarfLabel.setFont(new Font("Arial", 16));
+
+        Label descriptionDwarf = new Label("The Dwarf is a tank type class. Born from ironforge, " +
+                                    "the dwarf specializes in taking damage. He has very high hp with low attack.");
+        descriptionDwarf.setWrapText(true);
+        descriptionDwarf.setAlignment(Pos.TOP_CENTER);
+        descriptionDwarf.setStyle("-fx-text-fill: white;");
+        descriptionDwarf.setFont(new Font("Arial", 16));
+
+        dwarf.setSpacing(20);
+        dwarf.getChildren().addAll(imageViewDwarf, dwarfLabel, descriptionDwarf);
+        dwarf.setAlignment(Pos.TOP_CENTER);
+
+        VBox mage = new VBox();
+
+        Image imageMage = new Image (new FileInputStream( "Assets" + File.separator + "characterImages" + File.separator + "Mage.png"));
+        ImageView imageViewMage = new ImageView(imageMage);
+        imageViewMage.setPreserveRatio(true);
+        imageViewMage.setFitWidth(200);
+
+        Label mageLabel = new Label("Mage");
+        mageLabel.setAlignment(Pos.TOP_CENTER);
+        mageLabel.setStyle("-fx-text-fill: white;");
+        mageLabel.setFont(new Font("Arial", 16));
+
+        Label descriptionMage = new Label("The Mage is an elf with the innate ability to control the elements. Through his practise and elvin blood, the mage specializes in medium attack damage as well as medium health.");
+        descriptionMage.setWrapText(true);
+        descriptionMage.setAlignment(Pos.TOP_CENTER);
+        descriptionMage.setStyle("-fx-text-fill: white;");
+        descriptionMage.setFont(new Font("Arial", 16));
+
+        mage.setSpacing(20);
+        mage.getChildren().addAll(imageViewMage, mageLabel, descriptionMage);
+        mage.setAlignment(Pos.TOP_CENTER);
+
+        VBox damage = new VBox();
+
+        Image imageDamage = new Image (new FileInputStream("Assets" + File.separator + "characterImages" + File.separator + "Damage.png"));
+        ImageView imageViewDamage = new ImageView(imageDamage);
+        imageViewDamage.setPreserveRatio(true);
+        imageViewDamage.setFitWidth(200);
+
+        Label damageLabel = new Label("Damage");
+        damageLabel.setAlignment(Pos.TOP_CENTER);
+        damageLabel.setStyle("-fx-text-fill: white;");
+        damageLabel.setFont(new Font("Arial", 16));
+
+        Label descriptionDamage = new Label("Natural born killers, the damage is a human assassin raised from a young age to kill. The damage class specializes in high damage but has low hp.");
+        descriptionDamage.setWrapText(true);
+        descriptionDamage.setAlignment(Pos.TOP_CENTER);
+        descriptionDamage.setStyle("-fx-text-fill: white;");
+        descriptionDamage.setFont(new Font("Arial", 16));
+
+        damage.setSpacing(20);
+        damage.getChildren().addAll(imageViewDamage, damageLabel, descriptionDamage);
+        damage.setAlignment(Pos.TOP_CENTER);
+
+
+        HBox characters = new HBox();
+        characters.getChildren().addAll(mage, damage, dwarf);
+        characters.setAlignment(Pos.TOP_CENTER);
+        characters.setSpacing(100);
+        mage.setMaxWidth(100);
+        HBox.setHgrow(mage, Priority.NEVER);
+        HBox.setHgrow(dwarf, Priority.ALWAYS);
+        HBox.setHgrow(damage, Priority.ALWAYS);
+
+        gridPane.add(characters, 0, 0, 3, 2);
+
+        inputTextField = new TextField();
+        inputTextField.setFont(new Font("Arial", 16));
+        inputTextField.setFocusTraversable(true);
+
+        inputTextField.setAccessibleRole(AccessibleRole.TEXT_AREA);
+        inputTextField.setAccessibleRoleDescription("Text Entry Box");
+        inputTextField.setAccessibleText("Enter commands in this box.");
+        inputTextField.setAccessibleHelp("This is the area in which you can enter commands you would like to play.  Enter a command and hit return to continue.");
+        addTextHandlingEvent2(); //attach an event to this input field
+
+        Label commandLabel = new Label("Type the character you would like to play!");
+        commandLabel.setStyle("-fx-text-fill: white;");
+        commandLabel.setFont(new Font("Arial", 16));
+
+        VBox textEntry = new VBox();
+        textEntry.setStyle("-fx-background-color: #000000;");
+        textEntry.setPadding(new Insets(20, 20, 20, 20));
+        textEntry.getChildren().addAll(commandLabel, inputTextField);
+        textEntry.setSpacing(10);
+        textEntry.setAlignment(Pos.TOP_CENTER);
         gridPane.add( textEntry, 0, 2, 3, 1 );
 
         // Render everything
@@ -177,7 +362,6 @@ public class AdventureGameView {
         this.stage.setScene(scene);
         this.stage.setResizable(false);
         this.stage.show();
-
     }
 
 
@@ -238,6 +422,39 @@ public class AdventureGameView {
                 this.saveButton.requestFocus();
             }
         });
+    }
+
+    /**
+     * second text handling event for the initialization of character prompt
+      */
+    private void addTextHandlingEvent2(){
+        this.inputTextField.addEventHandler(KeyEvent.KEY_PRESSED, (keyEvent) -> {
+            if (keyEvent.getCode().equals(KeyCode.ENTER)) {
+                try {
+                    this.submitEvent2(this.inputTextField.getText().strip());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                this.inputTextField.clear();
+            } else if (keyEvent.getCode().equals(KeyCode.TAB)) {
+                this.saveButton.requestFocus();
+            }
+        });
+    }
+
+    /**
+     * second submit event to handle the character creation prompt
+     */
+    private void submitEvent2(String text) throws IOException {
+        text = text.strip().toUpperCase(); //get rid of white space
+        stopArticulation(); //if speaking, stop is
+
+        CharacterFactory characterFactory = new CharacterFactory();
+        Character character = characterFactory.getCharacter(text);
+        if (character != null) {
+            this.model.getPlayer().character = character;
+            intiUI();
+        }
     }
 
 
@@ -343,8 +560,38 @@ public class AdventureGameView {
         gridPane.add(roomPane, 1, 1);
         stage.sizeToScene();
 
+        updateLevel();
+
         //finally, articulate the description
         if (textToDisplay == null || textToDisplay.isBlank()) articulateRoomDescription();
+    }
+
+    /**
+     * updateLevel
+     * __________________________
+     * Update the level and xp displayed on the screen.
+     */
+    public void updateLevel() {
+        String levelText = "You are at Level (" + this.model.player.getLevel().getLevel() + ")    |    XP: ";
+        String oldLevel = levelLabel.getText();
+        levelLabel.setText(levelText);
+
+        double xpRatio = (double) this.model.player.getLevel().getXP() / this.model.player.getLevel().getXPToNextLevel();
+        xpBar.setProgress(xpRatio);
+
+        xpLabel.setText("(" + this.model.player.getLevel().getXPString() + ")");
+        xpLabel.setStyle("-fx-text-fill: white;");
+        xpLabel.setFont(new Font("Arial", 16));
+
+        if (!levelText.equals(oldLevel)) {
+            String oldRoomLabel = this.roomDescLabel.getText();
+            this.roomDescLabel.setText(this.model.player.getLevel().levelUpText());
+            PauseTransition pause = new PauseTransition(Duration.seconds(2));
+            pause.setOnFinished(actionEvent -> {
+                this.roomDescLabel.setText(oldRoomLabel);
+            });
+            pause.play();
+        }
     }
 
     /**
@@ -377,7 +624,7 @@ public class AdventureGameView {
     private void getRoomImage() {
 
         int roomNumber = this.model.getPlayer().getCurrentRoom().getRoomNumber();
-        String roomImage = this.model.getDirectoryName() + "/room-images/" + roomNumber + ".png";
+        String roomImage = this.model.getDirectoryName() + File.separator + "room-images" + File.separator + roomNumber + ".png";
 
         Image roomImageFile = new Image(roomImage);
         roomImageView = new ImageView(roomImageFile);
@@ -394,15 +641,7 @@ public class AdventureGameView {
     /**
      * updateItems
      * __________________________
-     *
-     * This method is partially completed, but you are asked to finish it off.
-     *
-     * The method should populate the objectsInRoom and objectsInInventory Vboxes.
-     * Each Vbox should contain a collection of nodes (Buttons, ImageViews, you can decide)
-     * Each node represents a different object.
-     * 
-     * Images of each object are in the assets 
-     * folders of the given adventure game.
+     * Update the items with buttons for items in room and in inventory.
      */
     public void updateItems() {
         this.objectsInInventory.getChildren().clear();
@@ -420,11 +659,12 @@ public class AdventureGameView {
             button.setContentDisplay(ContentDisplay.TOP);
             makeButtonAccessible(button, object.getName(), "Take " + object.getName() + ".", "Take " + object.getName() + ". Press this button to take the object into your inventory.");
             button.addEventHandler(MouseEvent.MOUSE_CLICKED, (mouseEvent) -> {
-                this.model.player.takeObject(object.getName());
-                this.updateItems();
-                this.updateScene("YOU HAVE TAKEN: \n " + object.getName());
+                this.submitEvent("TAKE " + object.getName());
             });
             this.objectsInRoom.getChildren().add(button);
+            if (this.model.player.getLevel().getLevel() < object.getLevel()) {
+                button.setOpacity(0.4);
+            }
         }
 
         //write some code here to add images of objects in a player's inventory room to the objectsInInventory Vbox
@@ -441,7 +681,7 @@ public class AdventureGameView {
             button.addEventHandler(MouseEvent.MOUSE_CLICKED, (mouseEvent) -> {
                 this.model.player.dropObject(object.getName());
                 this.updateItems();
-                this.updateScene("YOU HAVE DROPPED: \n " + object.getName());
+                this.updateScene("YOU HAVE DROPPED: " + object.getName());
             });
             this.objectsInInventory.getChildren().addAll(button);
         }
@@ -461,7 +701,7 @@ public class AdventureGameView {
         scI.setStyle("-fx-background: #000000; -fx-background-color:transparent;");
         gridPane.add(scI,2,1);
 
-
+        updateLevel();
     }
 
     /**
@@ -515,6 +755,7 @@ public class AdventureGameView {
         helpButton.setOnAction(e -> {
             stopArticulation(); //if speaking, stop
             showInstructions();
+
         });
     }
 
@@ -540,6 +781,16 @@ public class AdventureGameView {
         });
     }
 
+    /**
+     * This method handles the event related to the
+     * delete button.
+     */
+    public void addDeleteEvent() {
+        deleteButton.setOnAction(e -> {
+            gridPane.requestFocus();
+            DeleteView deleteView = new DeleteView(this);
+        });
+    }
 
     /**
      * This method articulates Room Descriptions
@@ -549,8 +800,7 @@ public class AdventureGameView {
         String adventureName = this.model.getDirectoryName();
         String roomName = this.model.getPlayer().getCurrentRoom().getRoomName();
 
-        if (!this.model.getPlayer().getCurrentRoom().getVisited()) musicFile = "./" + adventureName + "/sounds/" + roomName.toLowerCase() + "-long.mp3" ;
-        else musicFile = "./" + adventureName + "/sounds/" + roomName.toLowerCase() + "-short.mp3" ;
+        musicFile = "./" + adventureName + "/sounds/" + roomName.toLowerCase() + "-long.mp3";
         musicFile = musicFile.replace(" ","-");
 
         Media sound = new Media(new File(musicFile).toURI().toString());

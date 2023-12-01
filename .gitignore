@@ -6,5 +6,5 @@ out/
 *.class
 .DS_Store
 */.DS_Store
-*/*.png
-
+*.ser
+*/lib
