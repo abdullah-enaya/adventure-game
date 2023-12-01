@@ -637,8 +637,7 @@ public class AdventureGameView {
         //play background music
         String adventureName = this.model.getDirectoryName();
         String roomName = this.model.getPlayer().getCurrentRoom().getRoomName();
-        String musicPath = "/CSC207/group_74/assignment2/" + adventureName + "/music/" + roomName.toLowerCase() + "-background.mp3";
-        //"./" + adventureName + "/music/" + roomName.toLowerCase() + "-background.mp3";
+        String musicPath = "./" + adventureName + "/music/" + roomName.toLowerCase() + "-background.mp3";
         musicPath = musicPath.replace(" ","-");
         Media musicMedia = new Media(new File(musicPath).toURI().toString());  
         
