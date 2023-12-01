@@ -11,7 +11,7 @@ public class AdventureGame implements Serializable {
     private String helpText; //A variable to store the Help text of the game. This text is displayed when the user types "HELP" command.
     private final HashMap<Integer, Room> rooms; //A list of all the rooms in the game.
     private HashMap<String,String> synonyms = new HashMap<>(); //A HashMap to store synonyms of commands.
-    private final String[] actionVerbs = {"QUIT","INVENTORY","TAKE","DROP","LEVEL"}; //List of action verbs (other than motions) that exist in all games. Motion vary depending on the room and game.
+    public final String[] actionVerbs = {"QUIT","INVENTORY","TAKE","DROP","LEVEL"}; //List of action verbs (other than motions) that exist in all games. Motion vary depending on the room and game.
     public Player player; //The Player of the game.
 
     /**
@@ -34,7 +34,7 @@ public class AdventureGame implements Serializable {
 
     /**
      * Save the current state of the game to a file
-     * 
+     *
      * @param file pointer to file to write to
      */
     public void saveModel(File file) {

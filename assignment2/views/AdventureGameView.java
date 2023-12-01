@@ -2,25 +2,17 @@ package views;
 
 import AdventureModel.AdventureGame;
 import AdventureModel.AdventureObject;
-import AdventureModel.Player;
 import AdventureModel.character.Character;
 import AdventureModel.character.CharacterFactory;
-import AdventureModel.character.Damage;
-import AdventureModel.character.Mage;
-import AdventureModel.character.Tank;
+import SpeechToText.SpeechToText;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
-import javafx.beans.binding.DoubleBinding;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.ObservableList;
-import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -28,34 +20,20 @@ import javafx.scene.paint.Color;
 import javafx.scene.layout.*;
 import javafx.scene.input.KeyEvent; //you will need these!
 import javafx.scene.input.KeyCode;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
-import javafx.event.EventHandler; //you will need this too!
 import javafx.scene.AccessibleRole;
 
-import javax.swing.text.View;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 import java.io.*;
 
-import javafx.application.Application;
-import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.stage.Stage;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Objects;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Class AdventureGameView.
@@ -269,7 +247,7 @@ public class AdventureGameView {
         dwarfLabel.setFont(new Font("Arial", 16));
 
         Label descriptionDwarf = new Label("The Dwarf is a tank type class. Born from ironforge, " +
-                                    "the dwarf specializes in taking damage. He has very high hp with low attack.");
+                "the dwarf specializes in taking damage. He has very high hp with low attack.");
         descriptionDwarf.setWrapText(true);
         descriptionDwarf.setAlignment(Pos.TOP_CENTER);
         descriptionDwarf.setStyle("-fx-text-fill: white;");
@@ -402,16 +380,16 @@ public class AdventureGameView {
     /**
      * addTextHandlingEvent
      * __________________________
-     * Add an event handler to the myTextField attribute 
+     * Add an event handler to the myTextField attribute
      *
-     * Your event handler should respond when users 
-     * hits the ENTER or TAB KEY. If the user hits 
+     * Your event handler should respond when users
+     * hits the ENTER or TAB KEY. If the user hits
      * the ENTER Key, strip white space from the
-     * input to myTextField and pass the stripped 
+     * input to myTextField and pass the stripped
      * string to submitEvent for processing.
      *
-     * If the user hits the TAB key, move the focus 
-     * of the scene onto any other node in the scene 
+     * If the user hits the TAB key, move the focus
+     * of the scene onto any other node in the scene
      * graph by invoking requestFocus method.
      */
     private void addTextHandlingEvent() {
@@ -427,7 +405,7 @@ public class AdventureGameView {
 
     /**
      * second text handling event for the initialization of character prompt
-      */
+     */
     private void addTextHandlingEvent2(){
         this.inputTextField.addEventHandler(KeyEvent.KEY_PRESSED, (keyEvent) -> {
             if (keyEvent.getCode().equals(KeyCode.ENTER)) {
@@ -465,7 +443,7 @@ public class AdventureGameView {
      *
      * @param text the command that needs to be processed
      */
-    private void submitEvent(String text) {
+    public void submitEvent(String text) {
 
         text = text.strip(); //get rid of white space
         stopArticulation(); //if speaking, stop
@@ -481,6 +459,25 @@ public class AdventureGameView {
             return;
         } else if (text.equalsIgnoreCase("COMMANDS") || text.equalsIgnoreCase("C")) {
             showCommands(); //this is new!  We did not have this command in A1
+            return;
+        } else if (text.equalsIgnoreCase("TALK")) {
+            this.stopArticulation();
+            AtomicReference<String> test = new AtomicReference<>("");
+            Thread thread = new Thread(() -> {
+                String test4 = null;
+                test4 = SpeechToText.streamingMicRecognize(allPossiblePhrases());
+                test.set(test4);
+            });
+            thread.start();
+            String test3 = test.get();
+
+            PauseTransition pauseTransition = new PauseTransition(Duration.seconds(5));
+            pauseTransition.setOnFinished(actionEvent -> {
+                System.out.println(test);
+                submitEvent(test.get());
+            });
+            pauseTransition.play();
+
             return;
         }
 
@@ -519,6 +516,18 @@ public class AdventureGameView {
         }
     }
 
+    private ArrayList<String> allPossiblePhrases() {
+        ArrayList<String> allPhrases = new ArrayList<>();
+        allPhrases.addAll(this.model.player.getCurrentRoom().getCommandsList());
+        allPhrases.addAll(List.of(this.model.actionVerbs));
+        allPhrases.addAll(List.of(new String[] {"LOOK", "HELP", "COMMANDS"}));
+        for (AdventureObject object: this.model.player.getCurrentRoom().objectsInRoom) {
+            allPhrases.add(object.getName());
+        }
+        allPhrases.addAll(this.model.player.getInventory());
+        return allPhrases;
+    }
+
 
     /**
      * showCommands
@@ -542,7 +551,7 @@ public class AdventureGameView {
      * below the image.
      * Otherwise, the current room description will be dispplayed
      * below the image.
-     * 
+     *
      * @param textToDisplay the text to display below the image.
      */
     public void updateScene(String textToDisplay) {
@@ -600,7 +609,7 @@ public class AdventureGameView {
      * __________________________
      *
      * Format text for display.
-     * 
+     *
      * @param textToDisplay the text to be formatted for display.
      */
     private void formatText(String textToDisplay) {
