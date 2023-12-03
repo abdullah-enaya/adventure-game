@@ -21,7 +21,5 @@ public abstract class Character implements Serializable {
 
     public abstract int attack(int mob);
 
-    public abstract void playMinigame();
-
 
 }
