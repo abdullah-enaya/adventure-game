@@ -774,6 +774,7 @@ public class AdventureGameView {
      * load button.
      */
     public void addLoadEvent() {
+
         loadButton.setOnAction(e -> {
             gridPane.requestFocus();
             LoadView loadView = new LoadView(this);
