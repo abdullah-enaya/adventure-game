@@ -5,9 +5,13 @@ import AdventureModel.AdventureObject;
 import AdventureModel.character.Character;
 import AdventureModel.character.CharacterFactory;
 import SpeechToText.SpeechToText;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -33,7 +37,11 @@ import java.io.*;
 
 
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
+
+import SpeechToText.*;
 
 /**
  * Class AdventureGameView.
@@ -48,6 +56,7 @@ public class AdventureGameView {
     Button saveButton, loadButton, helpButton, deleteButton; //buttons
     Boolean helpToggle = false; //is help on display?
 
+    Timeline timeline;
     GridPane gridPane; //to hold images and buttons
     Label roomDescLabel = new Label(); //to hold room description and/or instructions
     VBox objectsInRoom = new VBox(); //to hold room items
@@ -59,6 +68,10 @@ public class AdventureGameView {
     private MediaPlayer mediaPlayer; //to play audio
     private boolean mediaPlaying; //to know if the audio is playing
 
+    SPTContext sptContext;
+
+
+
     /**
      * Adventure Game View Constructor
      * __________________________
@@ -67,6 +80,7 @@ public class AdventureGameView {
     public AdventureGameView(AdventureGame model, Stage stage) throws FileNotFoundException {
         this.model = model;
         this.stage = stage;
+        this.sptContext = new SPTContext();
         intiUI();
     }
 
@@ -221,9 +235,13 @@ public class AdventureGameView {
 
         // Render everything
         var scene = new Scene( gridPane ,  1000, 800);
-        scene.setFill(Color.BLACK);
         this.stage.setScene(scene);
+        scene.setFill(Color.BLACK);
         this.stage.setResizable(false);
+
+        // set-up Speech-To-Text (strategy pattern)
+        this.sptContext.setStrategy(new BasicGameStrategy(this));
+        this.sptContext.executeStrategy();
         this.stage.show();
     }
 
@@ -336,9 +354,13 @@ public class AdventureGameView {
 
         // Render everything
         var scene = new Scene( gridPane ,  1000, 800);
-        scene.setFill(Color.BLACK);
         this.stage.setScene(scene);
+        scene.setFill(Color.BLACK);
         this.stage.setResizable(false);
+
+        // set-up Speech-To-Text (strategy pattern)
+        this.sptContext.setStrategy(new ChooseCharacterStrategy(this));
+        this.sptContext.executeStrategy();
         this.stage.show();
     }
 
@@ -423,7 +445,7 @@ public class AdventureGameView {
     /**
      * second submit event to handle the character creation prompt
      */
-    private void submitEvent2(String text) throws IOException {
+    public void submitEvent2(String text) throws IOException {
         text = text.strip().toUpperCase(); //get rid of white space
         stopArticulation(); //if speaking, stop is
 
@@ -459,25 +481,6 @@ public class AdventureGameView {
         } else if (text.equalsIgnoreCase("COMMANDS") || text.equalsIgnoreCase("C")) {
             showCommands(); //this is new!  We did not have this command in A1
             return;
-        } else if (text.equalsIgnoreCase("TALK")) {
-            this.stopArticulation();
-            AtomicReference<String> test = new AtomicReference<>("");
-            Thread thread = new Thread(() -> {
-                String test4 = null;
-                test4 = SpeechToText.streamingMicRecognize(allPossiblePhrases());
-                test.set(test4);
-            });
-            thread.start();
-            String test3 = test.get();
-
-            PauseTransition pauseTransition = new PauseTransition(Duration.seconds(5));
-            pauseTransition.setOnFinished(actionEvent -> {
-                System.out.println(test);
-                submitEvent(test.get());
-            });
-            pauseTransition.play();
-
-            return;
         }
 
         //try to move!
@@ -489,7 +492,7 @@ public class AdventureGameView {
         } else if (output.equals("GAME OVER")) {
             updateScene("");
             updateItems();
-            PauseTransition pause = new PauseTransition(Duration.seconds(10));
+            PauseTransition pause = new PauseTransition(Duration.seconds(3));
             pause.setOnFinished(event -> {
                 Platform.exit();
             });
@@ -514,19 +517,6 @@ public class AdventureGameView {
             pause.play();
         }
     }
-
-    private ArrayList<String> allPossiblePhrases() {
-        ArrayList<String> allPhrases = new ArrayList<>();
-        allPhrases.addAll(this.model.player.getCurrentRoom().getCommandsList());
-        allPhrases.addAll(List.of(this.model.actionVerbs));
-        allPhrases.addAll(List.of(new String[] {"LOOK", "HELP", "COMMANDS"}));
-        for (AdventureObject object: this.model.player.getCurrentRoom().objectsInRoom) {
-            allPhrases.add(object.getName());
-        }
-        allPhrases.addAll(this.model.player.getInventory());
-        return allPhrases;
-    }
-
 
     /**
      * showCommands
@@ -829,5 +819,21 @@ public class AdventureGameView {
             mediaPlayer.stop(); //shush!
             mediaPlaying = false;
         }
+    }
+
+    public AdventureGame getModel() {
+        return model;
+    }
+
+    public Timeline getTimeline() {
+        return timeline;
+    }
+
+    public void setTimeline(Timeline timeline) {
+        this.timeline = timeline;
+    }
+
+    public Stage getStage() {
+        return stage;
     }
 }

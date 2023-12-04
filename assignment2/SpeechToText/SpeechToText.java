@@ -28,6 +28,7 @@ public class SpeechToText {
             PhraseSet.Builder phraseSet = PhraseSet.newBuilder();
             for (String phraseString : phrases) {
                 PhraseSet.Phrase.Builder phrase = PhraseSet.Phrase.newBuilder().setValue(phraseString);
+                phrase.setBoost(1000);
                 phraseSet.addPhrases(phrase);
             }
 
@@ -91,17 +92,21 @@ public class SpeechToText {
             // Audio Input Stream
             AudioInputStream audio = new AudioInputStream(targetDataLine);
             while (true) {
+
                 long estimatedTime = System.currentTimeMillis() - startTime;
                 byte[] data = new byte[6400];
                 audio.read(data);
-                if (estimatedTime > 5000 || !output[0].isEmpty()) { // 5 seconds
+
+                if (estimatedTime > 6000 || !output[0].isEmpty()) { // 6 seconds
                     System.out.println("Stop speaking.");
                     targetDataLine.stop();
                     targetDataLine.close();
                     break;
                 }
+
                 request = StreamingRecognizeRequest.newBuilder().setAudioContent(ByteString.copyFrom(data)).build();
                 clientStream.send(request);
+
             }
         } catch (Exception e) {
             System.out.println(e);
