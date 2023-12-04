@@ -19,7 +19,7 @@ public abstract class Character implements Serializable {
     public ArrayList<Ability> specialAbilities;
     public abstract int getHit(int mob);
 
-    public abstract int attack(int mob);
+    public abstract int attack();
 
 
 }
