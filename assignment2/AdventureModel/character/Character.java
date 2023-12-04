@@ -1,6 +1,7 @@
 package AdventureModel.character;
 
 import AdventureModel.AdventureObject;
+import AdventureModel.HealthPoints;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ import java.util.ArrayList;
  */
 public abstract class Character implements Serializable {
     public String title;
-    public int hp;
+    public HealthPoints health;
     public int attackDamage;
     public double attackRange;
     public ArrayList<AdventureObject> equippedItems;

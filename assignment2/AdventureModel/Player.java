@@ -28,6 +28,12 @@ public class Player implements Serializable {
     private Level level;
 
     /**
+     * The hp of the player
+     */
+
+
+
+    /**
      * Adventure Game Player Constructor
      */
     public Player(Room currentRoom) {
@@ -131,6 +137,7 @@ public class Player implements Serializable {
     public Level getLevel() {
         return this.level;
     }
+
 
     /**
      * Getter method for string representation of inventory.

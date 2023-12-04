@@ -1,5 +1,7 @@
 package AdventureModel.character;
 
+import AdventureModel.HealthPoints;
+
 import java.util.ArrayList;
 
 public class Mage extends Character {
@@ -11,7 +13,7 @@ public class Mage extends Character {
      */
     public Mage() {
         this.title = "Mage";
-        this.hp = 125;
+        this.health = new HealthPoints(125, 3, 125);
         this.attackDamage = 8;
         this.attackRange = 10;
         this.equippedItems = new ArrayList<>();
@@ -27,9 +29,9 @@ public class Mage extends Character {
      */
     @Override
     public int getHit(int mob) {
-        this.hp = this.hp - mob;
+        this.health.hp = this.health.hp - mob;
 
-        return this.hp;
+        return this.health.hp;
     }
 
     /**

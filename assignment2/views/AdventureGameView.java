@@ -78,6 +78,9 @@ public class AdventureGameView {
     TextField inputTextField; //for user input
     Label levelLabel, xpLabel;
     ProgressBar xpBar;
+    Label livesLabel, hpLabel;
+    ProgressBar healthBar;
+
     private MediaPlayer mediaPlayer; //to play audio
     private boolean mediaPlaying; //to know if the audio is playing
 
@@ -224,7 +227,27 @@ public class AdventureGameView {
         levelView.getChildren().addAll(levelLabel, xpBar, xpLabel);
         HBox.setHgrow(xpBar, Priority.ALWAYS);
         levelView.setSpacing(10);
-        gridPane.add( levelView, 0, 2, 3, 1 );
+        gridPane.add( levelView, 0, 3, 3, 1 );
+
+        //Health bar
+        livesLabel = new Label( "You have lives (" + this.model.player.character.health.getLives() + ")    |    HP: ");
+        livesLabel.setStyle("-fx-text-fill: white;");
+        livesLabel.setFont(new Font("Arial", 16));
+
+        healthBar = new ProgressBar();
+        healthBar.setMaxWidth(Double.MAX_VALUE);
+
+        hpLabel = new Label();
+        hpLabel.setStyle("-fx-text-fill: white;");
+        hpLabel.setFont(new Font("Arial", 16));
+
+        HBox healthView = new HBox();
+        healthView.setStyle("-fx-background-color: #000000;");
+        healthView.setPadding(new Insets(20, 20, 20, 20));
+        healthView.getChildren().addAll(livesLabel, healthBar, hpLabel);
+        HBox.setHgrow(healthBar, Priority.ALWAYS);
+        healthView.setSpacing(10);
+        gridPane.add(healthView, 0,2,3,1);
 
         updateScene("You have selected: " + this.model.player.character.title); //method displays an image and whatever text is supplied
         PauseTransition pause = new PauseTransition(Duration.seconds(3));
@@ -239,7 +262,7 @@ public class AdventureGameView {
         textEntry.getChildren().addAll(commandLabel, inputTextField);
         textEntry.setSpacing(10);
         textEntry.setAlignment(Pos.CENTER);
-        gridPane.add( textEntry, 0, 3, 3, 1 );
+        gridPane.add( textEntry, 0, 4, 3, 1 );
 
         // Render everything
         var scene = new Scene( gridPane ,  1000, 800);
@@ -321,7 +344,6 @@ public class AdventureGameView {
         damage.setSpacing(20);
         damage.getChildren().addAll(imageViewDamage, damageLabel, descriptionDamage);
         damage.setAlignment(Pos.TOP_CENTER);
-
 
         HBox characters = new HBox();
         characters.getChildren().addAll(mage, damage, dwarf);
@@ -561,7 +583,7 @@ public class AdventureGameView {
         stage.sizeToScene();
 
         updateLevel();
-
+        updateHealth();
         //finally, articulate the description
         if (textToDisplay == null || textToDisplay.isBlank()) articulateRoomDescription();
     }
@@ -593,6 +615,20 @@ public class AdventureGameView {
             pause.play();
         }
     }
+    public void updateHealth(){
+
+        String livesText = "You have Lives (" + this.model.player.character.health.getLives()+ ")    |    HP: ";
+        livesLabel.setText(livesText);
+
+        double hpRatio = (double) this.model.getPlayer().character.health.hp / this.model.getPlayer().character.health.maxHP;
+        healthBar.setProgress(hpRatio);
+
+        hpLabel.setText("(" + this.model.player.character.health.hp + "/" + this.model.player.character.health.maxHP + ")");
+        hpLabel.setStyle("-fx-text-fill: white;");
+        hpLabel.setFont(new Font("Arial", 16));
+
+    }
+
 
     /**
      * formatText

@@ -1,5 +1,7 @@
 package AdventureModel.character;
 
+import AdventureModel.HealthPoints;
+
 import java.util.ArrayList;
 
 //Tank character class
@@ -10,7 +12,7 @@ public class Tank extends Character{
      */
     public Tank() {
         this.title = "Dwarf";
-        this.hp = 150;
+        this.health = new HealthPoints(150, 3, 150);
         this.attackDamage = 5;
         this.attackRange = 1;
         this.equippedItems = new ArrayList<>();
@@ -29,9 +31,9 @@ public class Tank extends Character{
 
     public int getHit(int mob) {
 
-        this.hp = this.hp - mob;
+        this.health.hp = this.health.hp - mob;
 
-        return this.hp;
+        return this.health.hp;
 
     }
 
