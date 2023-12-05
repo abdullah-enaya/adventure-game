@@ -39,14 +39,12 @@ public class Tank extends Character{
 
     /**
      * Responsible for attacking mob with unique attack value
-     * @param mob is the mobs hp who is being attacked
+<<<<<<< HEAD
      * @return the mobs hp
      */
     @Override
-    public int attack(int mob) {
-        mob = mob - this.attackDamage;
-
-        return mob;
+    public int attack() {
+        return this.attackDamage;
     }
 
     public void playMinigame(){
