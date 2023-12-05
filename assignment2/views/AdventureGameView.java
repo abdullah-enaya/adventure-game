@@ -92,10 +92,6 @@ public class AdventureGameView {
         intiUI();
     }
 
-    public AdventureGameView(Stage stage) {
-        this.stage = stage;
-    }
-
     /**
      * Adventure Game View Bare Constructor
      * __________________________
@@ -112,15 +108,8 @@ public class AdventureGameView {
 
         // setting up the stage
         this.stage.setTitle("Group 74's Adventure Game"); //Replace <YOUR UTORID> with your UtorID
-<<<<<<< HEAD
         this.gridPane = new GridPane();
-=======
-<<<<<<< HEAD
 
-=======
-        this.gridPane = new GridPane();
->>>>>>> 9937c31 ([DEV-1.3] Implemented SelectModel view, changed AdventureGameApp.)
->>>>>>> 5a82b31 (Fix merge conflicts)
         //Inventory + Room items
         objectsInInventory.setSpacing(10);
         objectsInInventory.setAlignment(Pos.TOP_CENTER);
@@ -661,7 +650,7 @@ public class AdventureGameView {
 
         //write some code here to add images of objects in a given room to the objectsInRoom Vbox
         for (AdventureObject object: this.model.player.getCurrentRoom().objectsInRoom) {
-            Image image = new Image(this.model.getDirectoryName() + File.separator + "objectImages" + File.separator + object.getName() + ".jpg");
+            Image image = new Image("file:" + this.model.getDirectoryName() + File.separator + "objectImages" + File.separator + object.getName() + ".jpg");
             ImageView imageView = new ImageView();
             imageView.setImage(image);
             imageView.setFitWidth(100);
@@ -681,7 +670,7 @@ public class AdventureGameView {
 
         //write some code here to add images of objects in a player's inventory room to the objectsInInventory Vbox
         for (AdventureObject object: this.model.player.inventory) {
-            Image image = new Image(this.model.getDirectoryName() + File.separator + "objectImages" + File.separator + object.getName() + ".jpg");
+            Image image = new Image("file:" + this.model.getDirectoryName() + File.separator + "objectImages" + File.separator + object.getName() + ".jpg");
             ImageView imageView = new ImageView();
             imageView.setImage(image);
             imageView.setFitWidth(100);
