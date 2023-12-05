@@ -15,11 +15,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * Concrete strategy for Speech-To-Text.
+ * Strategy when playing the basic game.
+ */
 public class BasicGameStrategy extends SPTStrategy{
+
+    /**
+     * Initializes the attributes.
+     * @param view the adventure game view.
+     */
     public BasicGameStrategy(AdventureGameView view) {
         super(view);
     }
 
+    /**
+     * Set up the speech-to-text by creating a timeline
+     * and activating Google API.
+     */
     @Override
     public void setUpSpeechToText() {
         Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(6), (ActionEvent event) -> {
@@ -61,6 +74,10 @@ public class BasicGameStrategy extends SPTStrategy{
         });
     }
 
+    /**
+     * Return the legal phrases for a given strategy.
+     * return a list of all legal phrases for the strategy
+     **/
     @Override
     public ArrayList<String> getPhrases() {
         ArrayList<String> allPhrases = new ArrayList<>();

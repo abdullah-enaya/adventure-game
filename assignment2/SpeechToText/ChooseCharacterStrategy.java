@@ -15,12 +15,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * Concrete strategy for Speech-To-Text.
+ * Strategy when choosing a character class.
+ */
 public class ChooseCharacterStrategy extends SPTStrategy {
 
+    /**
+     * Initializes the attributes.
+     * @param view the adventure game view.
+     */
     public ChooseCharacterStrategy(AdventureGameView view) {
         super(view);
     }
 
+    /**
+     * Set up the speech-to-text by creating a timeline
+     * and activating Google API.
+     */
     public void setUpSpeechToText() {
         Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(6), (ActionEvent event) -> {
             AtomicReference<String> command = new AtomicReference<>("");
@@ -57,6 +69,10 @@ public class ChooseCharacterStrategy extends SPTStrategy {
         });
     }
 
+    /**
+     * Return the legal phrases for a given strategy.
+     * return a list of all legal phrases for the strategy
+    **/
     @Override
     public ArrayList<String> getPhrases() {
         return new ArrayList<>(List.of("MAGE", "DAMAGE", "DWARF"));

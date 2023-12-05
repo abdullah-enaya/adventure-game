@@ -14,7 +14,12 @@ import javax.sound.sampled.*;
 import javax.sound.sampled.DataLine.Info;
 import java.util.ArrayList;
 
-
+/**
+ * Google API based Speech-To-Text.
+ * Developed by Google.
+ *
+ * This code is available on the documentation website.
+ */
 public class SpeechToText {
 
     /** Performs microphone streaming speech recognition with a duration of 1 minute. */
