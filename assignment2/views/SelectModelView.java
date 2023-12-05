@@ -15,18 +15,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.File;
-<<<<<<< HEAD
 import java.io.FileNotFoundException;
-import java.io.IOException;
-
-
-/**
- * Class SelectModelView.
- * <p>
- * Selects the game model.
- */
-public class SelectModelView {
-=======
 import java.io.IOException;
 
 public class SelectModelView {
@@ -35,8 +24,6 @@ public class SelectModelView {
      * <p>
      * Selects the game model.
      */
-
->>>>>>> 5a82b31 (Fix merge conflicts)
     private Stage stage;
 
     private GridPane gridPane;
@@ -50,26 +37,20 @@ public class SelectModelView {
 
     private Button loadButton;
 
-<<<<<<< HEAD
     /**
      * Adventure Select Model View Constructor
      *
      * Initializes attributes
      */
-=======
->>>>>>> 5a82b31 (Fix merge conflicts)
     public SelectModelView(Stage stage) {
         this.stage = stage;
         this.gridPane = new GridPane();
         initUI();
     }
 
-<<<<<<< HEAD
     /**
      * Initialize the UI
      */
-=======
->>>>>>> 5a82b31 (Fix merge conflicts)
     public void initUI() {
         this.stage.setTitle("Select your game!");
         gridPane.setPadding(new Insets(20));
@@ -93,7 +74,7 @@ public class SelectModelView {
         ColumnConstraints column1 = new ColumnConstraints(150);
         ColumnConstraints column2 = new ColumnConstraints(650);
         ColumnConstraints column3 = new ColumnConstraints(150);
-<<<<<<< HEAD
+
         column3.setHgrow(Priority.SOMETIMES); //let some columns grow to take any extra space
         column1.setHgrow(Priority.SOMETIMES);
 
@@ -106,20 +87,6 @@ public class SelectModelView {
 
         gridPane.getColumnConstraints().addAll(column1, column2, column1);
         gridPane.getRowConstraints().addAll(row1, row2, row1);
-=======
-        column3.setHgrow( Priority.SOMETIMES ); //let some columns grow to take any extra space
-        column1.setHgrow( Priority.SOMETIMES );
-
-        // Row constraints
-        RowConstraints row1 = new RowConstraints();
-        RowConstraints row2 = new RowConstraints( 550 );
-        RowConstraints row3 = new RowConstraints();
-        row1.setVgrow( Priority.SOMETIMES );
-        row3.setVgrow( Priority.SOMETIMES );
-
-        gridPane.getColumnConstraints().addAll( column1 , column2 , column1 );
-        gridPane.getRowConstraints().addAll( row1 , row2 , row1 );
->>>>>>> 5a82b31 (Fix merge conflicts)
 
         final Stage dialog = new Stage(); //dialogue box
         dialog.initModality(Modality.APPLICATION_MODAL);
@@ -154,24 +121,17 @@ public class SelectModelView {
         hBox.setAlignment(Pos.CENTER);
         gridPane.add(hBox, 1, 2);
 
-<<<<<<< HEAD
         var scene = new Scene(gridPane, 1000, 800);
-=======
-        var scene = new Scene( gridPane ,  1000, 800);
->>>>>>> 5a82b31 (Fix merge conflicts)
         scene.setFill(Color.BLACK);
         this.stage.setScene(scene);
         this.stage.setResizable(false);
         this.stage.show();
     }
 
-<<<<<<< HEAD
     /**
      * This method handles the event related to the
      * load button.
      */
-=======
->>>>>>> 5a82b31 (Fix merge conflicts)
     public void addLoadEvent() {
         loadButton.setOnAction(e -> {
             gridPane.requestFocus();
@@ -179,7 +139,6 @@ public class SelectModelView {
         });
     }
 
-<<<<<<< HEAD
     /**
      * customizeButton
      *
@@ -188,15 +147,12 @@ public class SelectModelView {
      * @param w width
      * @param h height
      */
-=======
->>>>>>> 5a82b31 (Fix merge conflicts)
     private void customizeButton(Button inputButton, int w, int h) {
         inputButton.setPrefSize(w, h);
         inputButton.setFont(new Font("Arial", 16));
         inputButton.setStyle("-fx-background-color: #17871b; -fx-text-fill: white;");
     }
 
-<<<<<<< HEAD
     /**
      * makeButtonAccessible
      *
@@ -208,8 +164,6 @@ public class SelectModelView {
      * @param shortString ARIA accessible text
      * @param longString ARIA accessible help text
      */
-=======
->>>>>>> 5a82b31 (Fix merge conflicts)
     public static void makeButtonAccessible(Button inputButton, String name, String shortString, String longString) {
         inputButton.setAccessibleRole(AccessibleRole.BUTTON);
         inputButton.setAccessibleRoleDescription(name);
@@ -247,11 +201,7 @@ public class SelectModelView {
      * In this case, change the selectGameLabel to indicate a new game has been loaded.
      *
      * @param selectGameLabel the label to use to print errors and or successes to the user.
-<<<<<<< HEAD
      * @param GameList the ListView to populate
-=======
-     * @param GameList        the ListView to populate
->>>>>>> 5a82b31 (Fix merge conflicts)
      */
     private void selectGame(Label selectGameLabel, ListView<String> GameList) throws IOException {
         //saved games will be in the Games/Saved folder!
@@ -273,7 +223,6 @@ public class SelectModelView {
      * @return new AdventureGame
      */
     public AdventureGame selectModel(String GameModel) throws IOException, ClassNotFoundException {
-<<<<<<< HEAD
         if (GameModel != null) {
             return new AdventureGame(GameModel);
         } else {
@@ -281,29 +230,17 @@ public class SelectModelView {
         }
     }
 
-    /**
-     *
-     * @return the current Adventure Game
-     */
-=======
-        return new AdventureGame(GameModel);
-    }
-
->>>>>>> 5a82b31 (Fix merge conflicts)
     public AdventureGame getAdventureGame() {
         return adventureGame;
     }
 
-<<<<<<< HEAD
     /**
      *
      * @return the current Adventure Game View
      */
-=======
->>>>>>> 5a82b31 (Fix merge conflicts)
     public AdventureGameView getAdventureGameView() {
         return adventureGameView;
     }
-}
 
+}
 
