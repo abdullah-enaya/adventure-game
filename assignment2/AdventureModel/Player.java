@@ -49,6 +49,8 @@ public class Player implements Serializable {
      * the room and returns true. If the object is not present in the room, the method
      * returns false.
      *
+     * Added to handle case that checks if object is able to go in inventory depending on character Class
+     *
      * @param object name of the object to pick up
      * @return true if picked up, false otherwise
      */
