@@ -31,7 +31,7 @@ public class Snake {
     private static final int WIDTH = 800, HEIGHT = 800; // size of view
     private static final int ROWS = 20, COLS = 20; // num of rows = cols = 20
     private static final int SQUARE_SIZE = WIDTH / ROWS; // size of each square (for gui)
-    private static final String FOOD_IMAGE = "Minigame/Resources/img.png"; // image of the food object
+    private static final String FOOD_IMAGE = "Minigame/Resources/img.gif"; // image of the food object
 
     private static final int RIGHT = 0, LEFT = 1, UP = 2, DOWN = 3;
 
@@ -99,7 +99,7 @@ public class Snake {
         snakeHead = snakeBody.get(0);
         generateFood();
 
-        timeline = new Timeline(new KeyFrame(Duration.millis(130), e -> {
+        timeline = new Timeline(new KeyFrame(Duration.millis(200), e -> {
             run(gc);
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
@@ -170,7 +170,7 @@ public class Snake {
                 if ((i + j) % 2 == 0) {
                     gc.setFill(Color.web("FFB6C1")); // PINK!!!
                 } else {
-                    gc.setFill(Color.web("E0BFB8"));
+                    gc.setFill(Color.web("cfd7fd"));
                 }
                 gc.fillRect(i * SQUARE_SIZE, j * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
             }
@@ -195,7 +195,7 @@ public class Snake {
                 continue;
             }
 
-            foodImage = new Image(FOOD_IMAGE);
+            foodImage = new Image(FOOD_IMAGE, 70, 50, false, false);
             break;
         }
     }
