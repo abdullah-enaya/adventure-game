@@ -89,7 +89,7 @@ public class AdventureLoader {
                     level = 0;
                 }
                 if (dest.contains("/")) {
-                    String[] blockedPath = dest.split("/+|");
+                    String[] blockedPath = dest.split("[/|]");
                     String dest_part = blockedPath[0];
                     String object = blockedPath[1];
                     Passage entry = new Passage(direction, dest_part, level, object);

@@ -12,6 +12,6 @@ public class PlayerAction2 extends CurrentMove {
         this.bossFight.boss.getHit(this.bossFight.playerCharacter.attack());
 
         this.bossFight.currentMove = new BossAction1(this.bossFight);
-        this.bossFight.doNextTwoMoved();
+        this.bossFight.doNextTwoMoves();
     }
 }

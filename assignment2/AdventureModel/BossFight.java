@@ -22,7 +22,7 @@ public class BossFight {
         this.currentMove.doNextMove();
     }
 
-    public void doNextTwoMoved() {
+    public void doNextTwoMoves() {
         this.doNextMove();
         this.doNextMove();
     }

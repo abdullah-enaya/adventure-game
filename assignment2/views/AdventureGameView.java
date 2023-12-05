@@ -75,6 +75,7 @@ public class AdventureGameView {
     VBox objectsInRoom = new VBox(); //to hold room items
     VBox objectsInInventory = new VBox(); //to hold inventory items
     ImageView roomImageView; //to hold room image
+    BossFightView bossView; //to hold boss fight view
     TextField inputTextField; //for user input
     Label levelLabel, xpLabel;
     ProgressBar xpBar;
@@ -481,7 +482,15 @@ public class AdventureGameView {
         } else if (text.equalsIgnoreCase("COMMANDS") || text.equalsIgnoreCase("C")) {
             showCommands(); //this is new!  We did not have this command in A1
             return;
+        } else if (text.equalsIgnoreCase("BOSS")) {
+            this.bossView = new BossFightView(this.model);
+            this.gridPane.add(bossView.bossPane, 1, 1, 1, 1);
+            return;
+        } else if (text.equalsIgnoreCase("FIREBALL")) {
+            this.bossView.throwFireball();
+            return;
         }
+
 
         //try to move!
         String output = this.model.interpretAction(text); //process the command!
@@ -545,8 +554,8 @@ public class AdventureGameView {
      * @param textToDisplay the text to display below the image.
      */
     public void updateScene(String textToDisplay) {
-
         getRoomImage(); //get the image of the current room
+
         formatText(textToDisplay); //format the text to display
         roomDescLabel.setPrefWidth(500);
         roomDescLabel.setPrefHeight(500);
@@ -624,7 +633,7 @@ public class AdventureGameView {
     private void getRoomImage() {
 
         int roomNumber = this.model.getPlayer().getCurrentRoom().getRoomNumber();
-        String roomImage = this.model.getDirectoryName() + File.separator + "room-images" + File.separator + roomNumber + ".png";
+        String roomImage = "file:" + this.model.getDirectoryName() + File.separator + "room-images" + File.separator + roomNumber + ".png";
 
         Image roomImageFile = new Image(roomImage);
         roomImageView = new ImageView(roomImageFile);
@@ -649,7 +658,7 @@ public class AdventureGameView {
 
         //write some code here to add images of objects in a given room to the objectsInRoom Vbox
         for (AdventureObject object: this.model.player.getCurrentRoom().objectsInRoom) {
-            Image image = new Image(this.model.getDirectoryName() + File.separator + "objectImages" + File.separator + object.getName() + ".jpg");
+            Image image = new Image("file:" + this.model.getDirectoryName() + File.separator + "objectImages" + File.separator + object.getName() + ".jpg");
             ImageView imageView = new ImageView();
             imageView.setImage(image);
             imageView.setFitWidth(100);
