@@ -136,6 +136,8 @@ public class AdventureLoader {
             } else {
                 level = 0;
             }
+
+
             int i = Integer.parseInt(objectLocation);
             Room location = this.game.getRooms().get(i);
             AdventureObject object = new AdventureObject(objectName, objectDescription, location, objectXP, level);

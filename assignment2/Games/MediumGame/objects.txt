@@ -45,3 +45,15 @@ a small plant murmuring "Water, water"
 CHEST
 a pirate chest
 1
+
+DAGGER
+a dagger
+1
+
+RING
+a ring
+1
+
+SHIELD
+a shield
+1
