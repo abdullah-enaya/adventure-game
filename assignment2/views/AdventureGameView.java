@@ -823,18 +823,35 @@ public class AdventureGameView {
         }
     }
 
+    /**
+     * Getter for model.
+     * @return the adventure game model
+     */
     public AdventureGame getModel() {
         return model;
     }
 
+    /**
+     * Getter for speech-to-text timeline.
+     * @return the speech-to-text timeline
+     */
     public Timeline getTimeline() {
         return timeline;
     }
 
+
+    /**
+     * Setter for speech-to-text timeline.
+     * @param timeline the timelines to be set
+     */
     public void setTimeline(Timeline timeline) {
         this.timeline = timeline;
     }
 
+    /**
+     * Getter for the stage.
+     * @return the stage
+     */
     public Stage getStage() {
         return stage;
     }
