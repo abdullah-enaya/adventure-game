@@ -11,8 +11,10 @@ public class AdventureGame implements Serializable {
     private String helpText; //A variable to store the Help text of the game. This text is displayed when the user types "HELP" command.
     private final HashMap<Integer, Room> rooms; //A list of all the rooms in the game.
     private HashMap<String,String> synonyms = new HashMap<>(); //A HashMap to store synonyms of commands.
-    private final String[] actionVerbs = {"QUIT","INVENTORY","TAKE","DROP","LEVEL"}; //List of action verbs (other than motions) that exist in all games. Motion vary depending on the room and game.
+    final String[] actionVerbs = {"QUIT","INVENTORY","TAKE","DROP","LEVEL"}; //List of action verbs (other than motions) that exist in all games. Motion vary depending on the room and game.
     public Player player; //The Player of the game.
+    public GameState gameState;
+    public Passage after;
 
     /**
      * Adventure Game Constructor
@@ -117,6 +119,11 @@ public class AdventureGame implements Serializable {
         Passage chosen = null;
         for (Passage entry : possibilities) {
             if (chosen == null && entry.getIsBlocked()) {
+                if (entry.getKeyName().equals("BOSS")) {
+                    after = entry;
+                    return -3;
+                }
+
                 if (this.player.getInventory().contains(entry.getKeyName())) {
                     chosen = entry; //we can make it through, given our stuff
                     break;
@@ -152,8 +159,12 @@ public class AdventureGame implements Serializable {
      * @param command String representation of the command.
      */
     public String interpretAction(String command){
+        if (gameState != null) {
+            return gameState.interpretAction(command);
+        }
 
         String[] inputArray = tokenize(command); //look up synonyms
+
 
         PassageTable motionTable = this.player.getCurrentRoom().getMotionTable(); //where can we move?
 
@@ -164,6 +175,9 @@ public class AdventureGame implements Serializable {
                     return "GAME OVER";
                 else return "FORCED";
             } //something is up here! We are dead or we won.
+            else if (move == -3) {
+                return "BOSS START";
+            }
             else if (move == 0) {
                 return null;
             } else {

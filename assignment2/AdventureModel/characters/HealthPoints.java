@@ -1,6 +1,6 @@
-package AdventureModel;
+package AdventureModel.characters;
 
-import Exceptions.NegativeXPException;
+import Exceptions.NegativeValueException;
 
 public class HealthPoints {
 
@@ -22,11 +22,11 @@ public class HealthPoints {
     /**
      * init player health points
      * @param health int of player health
-     * @param life int of number of player lives
+     * @param lives int of number of player lives
      */
-    public HealthPoints(int health, int life, int maxHealth){
+    public HealthPoints(int health, int lives, int maxHealth){
         this.hp = health;
-        this.lives = life;
+        this.lives = lives;
         this.maxHP = maxHealth;
     }
 
@@ -61,34 +61,36 @@ public class HealthPoints {
         }
         this.hp += hp;
 
-        boolean changed = false;
-        while (this.xpToNextLevel != 0 && this.xp >= this.xpToNextLevel) {
-            this.xp -= this.xpToNextLevel;
-            this.incrementLevel();
-            changed = true;
-        }
-        return changed;
+        if (this.hp >= maxHP) {
+            this.hp = maxHP;
+            return true;
+        } else return false;
     }
 
     /**
-     * Remove the given xp to the player, updating the level when needed. Return true if level was changed.
+     * Remove the given hp from the player, losing a life if hp reaches 0, and returns true if so.
      *
-     * @param xp The XP points to remove from the player.
-     * @return true iff level has changed, false otherwise.
+     * @param hp The HP points to remove from the player.
+     * @return true iff a live was lost, false otherwise.
      */
-    public boolean removeXP(int xp) {
-        if (xp < 0) {
-            throw new NegativeXPException();
+    public boolean removeHP(int hp) {
+        if (hp < 0) {
+            throw new NegativeValueException();
         }
-        this.xp -= xp;
+        this.hp -= hp;
 
-        boolean changed = false;
-        while (this.level > 1 && this.xp <= 0) {
-            this.decrementLevel();
-            this.xp += this.xpToNextLevel;
-            changed = true;
-        }
-        return changed;
+        if (this.hp <= 0) {
+            loseALife();
+            return true;
+        } else return false;
+    }
+
+    /**
+     * Loses a life, resets HP
+     */
+    private void loseALife() {
+        this.lives -= 1;
+        this.hp = maxHP;
     }
 
     /**
@@ -99,8 +101,7 @@ public class HealthPoints {
         return this.lives;
     }
 
-    public void death(){
-    }
+
 
 
 

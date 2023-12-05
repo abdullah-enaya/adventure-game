@@ -1,7 +1,6 @@
 package AdventureModel;
 
 import Exceptions.NegativeValueException;
-import Exceptions.NegativeXPException;
 
 import java.io.Serializable;
 

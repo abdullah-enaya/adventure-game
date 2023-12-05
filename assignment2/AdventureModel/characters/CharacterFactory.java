@@ -1,4 +1,4 @@
-package AdventureModel.character;
+package AdventureModel.characters;
 
 public class CharacterFactory {
 

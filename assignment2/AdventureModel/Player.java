@@ -1,6 +1,6 @@
 package AdventureModel;
 
-import AdventureModel.character.Character;
+import AdventureModel.characters.Character;
 
 import java.io.Serializable;
 import java.util.ArrayList;
