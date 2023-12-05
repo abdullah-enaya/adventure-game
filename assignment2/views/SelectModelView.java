@@ -18,13 +18,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-
-/**
- * Class SelectModelView.
- * <p>
- * Selects the game model.
- */
 public class SelectModelView {
+    /**
+     * Class SelectModelView.
+     * <p>
+     * Selects the game model.
+     */
     private Stage stage;
 
     private GridPane gridPane;
@@ -75,6 +74,7 @@ public class SelectModelView {
         ColumnConstraints column1 = new ColumnConstraints(150);
         ColumnConstraints column2 = new ColumnConstraints(650);
         ColumnConstraints column3 = new ColumnConstraints(150);
+
         column3.setHgrow(Priority.SOMETIMES); //let some columns grow to take any extra space
         column1.setHgrow(Priority.SOMETIMES);
 
@@ -230,10 +230,6 @@ public class SelectModelView {
         }
     }
 
-    /**
-     *
-     * @return the current Adventure Game
-     */
     public AdventureGame getAdventureGame() {
         return adventureGame;
     }
@@ -245,6 +241,6 @@ public class SelectModelView {
     public AdventureGameView getAdventureGameView() {
         return adventureGameView;
     }
-}
 
+}
 

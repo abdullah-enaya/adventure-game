@@ -2,25 +2,21 @@ package views;
 
 import AdventureModel.AdventureGame;
 import AdventureModel.AdventureObject;
-import AdventureModel.Player;
 import AdventureModel.character.Character;
 import AdventureModel.character.CharacterFactory;
-import AdventureModel.character.Damage;
-import AdventureModel.character.Mage;
-import AdventureModel.character.Tank;
+import SpeechToText.SpeechToText;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.beans.binding.DoubleBinding;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.ObservableList;
-import javafx.geometry.HPos;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -28,34 +24,24 @@ import javafx.scene.paint.Color;
 import javafx.scene.layout.*;
 import javafx.scene.input.KeyEvent; //you will need these!
 import javafx.scene.input.KeyCode;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
-import javafx.event.EventHandler; //you will need this too!
 import javafx.scene.AccessibleRole;
 
-import javax.swing.text.View;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 import java.io.*;
 
-import javafx.application.Application;
-import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.stage.Stage;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Objects;
+import SpeechToText.*;
 
 /**
  * Class AdventureGameView.
@@ -70,6 +56,7 @@ public class AdventureGameView {
     Button saveButton, loadButton, helpButton, deleteButton; //buttons
     Boolean helpToggle = false; //is help on display?
 
+    Timeline timeline;
     GridPane gridPane; //to hold images and buttons
     Label roomDescLabel = new Label(); //to hold room description and/or instructions
     VBox objectsInRoom = new VBox(); //to hold room items
@@ -81,6 +68,10 @@ public class AdventureGameView {
     private MediaPlayer mediaPlayer; //to play audio
     private boolean mediaPlaying; //to know if the audio is playing
 
+    SPTContext sptContext;
+
+
+
     /**
      * Adventure Game View Constructor
      * __________________________
@@ -89,6 +80,7 @@ public class AdventureGameView {
     public AdventureGameView(AdventureGame model, Stage stage) throws FileNotFoundException {
         this.model = model;
         this.stage = stage;
+        this.sptContext = new SPTContext();
         intiUI();
     }
 
@@ -109,6 +101,7 @@ public class AdventureGameView {
         // setting up the stage
         this.stage.setTitle("Group 74's Adventure Game"); //Replace <YOUR UTORID> with your UtorID
         this.gridPane = new GridPane();
+
         //Inventory + Room items
         objectsInInventory.setSpacing(10);
         objectsInInventory.setAlignment(Pos.TOP_CENTER);
@@ -243,9 +236,13 @@ public class AdventureGameView {
 
         // Render everything
         var scene = new Scene( gridPane ,  1000, 800);
-        scene.setFill(Color.BLACK);
         this.stage.setScene(scene);
+        scene.setFill(Color.BLACK);
         this.stage.setResizable(false);
+
+        // set-up Speech-To-Text (strategy pattern)
+        this.sptContext.setStrategy(new BasicGameStrategy(this));
+        this.sptContext.executeStrategy();
         this.stage.show();
     }
 
@@ -268,7 +265,7 @@ public class AdventureGameView {
         dwarfLabel.setFont(new Font("Arial", 16));
 
         Label descriptionDwarf = new Label("The Dwarf is a tank type class. Born from ironforge, " +
-                                    "the dwarf specializes in taking damage. He has very high hp with low attack.");
+                "the dwarf specializes in taking damage. He has very high hp with low attack.");
         descriptionDwarf.setWrapText(true);
         descriptionDwarf.setAlignment(Pos.TOP_CENTER);
         descriptionDwarf.setStyle("-fx-text-fill: white;");
@@ -358,9 +355,13 @@ public class AdventureGameView {
 
         // Render everything
         var scene = new Scene( gridPane ,  1000, 800);
-        scene.setFill(Color.BLACK);
         this.stage.setScene(scene);
+        scene.setFill(Color.BLACK);
         this.stage.setResizable(false);
+
+        // set-up Speech-To-Text (strategy pattern)
+        this.sptContext.setStrategy(new ChooseCharacterStrategy(this));
+        this.sptContext.executeStrategy();
         this.stage.show();
     }
 
@@ -401,16 +402,16 @@ public class AdventureGameView {
     /**
      * addTextHandlingEvent
      * __________________________
-     * Add an event handler to the myTextField attribute 
+     * Add an event handler to the myTextField attribute
      *
-     * Your event handler should respond when users 
-     * hits the ENTER or TAB KEY. If the user hits 
+     * Your event handler should respond when users
+     * hits the ENTER or TAB KEY. If the user hits
      * the ENTER Key, strip white space from the
-     * input to myTextField and pass the stripped 
+     * input to myTextField and pass the stripped
      * string to submitEvent for processing.
      *
-     * If the user hits the TAB key, move the focus 
-     * of the scene onto any other node in the scene 
+     * If the user hits the TAB key, move the focus
+     * of the scene onto any other node in the scene
      * graph by invoking requestFocus method.
      */
     private void addTextHandlingEvent() {
@@ -426,7 +427,7 @@ public class AdventureGameView {
 
     /**
      * second text handling event for the initialization of character prompt
-      */
+     */
     private void addTextHandlingEvent2(){
         this.inputTextField.addEventHandler(KeyEvent.KEY_PRESSED, (keyEvent) -> {
             if (keyEvent.getCode().equals(KeyCode.ENTER)) {
@@ -445,7 +446,7 @@ public class AdventureGameView {
     /**
      * second submit event to handle the character creation prompt
      */
-    private void submitEvent2(String text) throws IOException {
+    public void submitEvent2(String text) throws IOException {
         text = text.strip().toUpperCase(); //get rid of white space
         stopArticulation(); //if speaking, stop is
 
@@ -464,7 +465,7 @@ public class AdventureGameView {
      *
      * @param text the command that needs to be processed
      */
-    private void submitEvent(String text) {
+    public void submitEvent(String text) {
 
         text = text.strip(); //get rid of white space
         stopArticulation(); //if speaking, stop
@@ -492,7 +493,7 @@ public class AdventureGameView {
         } else if (output.equals("GAME OVER")) {
             updateScene("");
             updateItems();
-            PauseTransition pause = new PauseTransition(Duration.seconds(10));
+            PauseTransition pause = new PauseTransition(Duration.seconds(3));
             pause.setOnFinished(event -> {
                 Platform.exit();
             });
@@ -518,7 +519,6 @@ public class AdventureGameView {
         }
     }
 
-
     /**
      * showCommands
      * __________________________
@@ -541,7 +541,7 @@ public class AdventureGameView {
      * below the image.
      * Otherwise, the current room description will be dispplayed
      * below the image.
-     * 
+     *
      * @param textToDisplay the text to display below the image.
      */
     public void updateScene(String textToDisplay) {
@@ -599,7 +599,7 @@ public class AdventureGameView {
      * __________________________
      *
      * Format text for display.
-     * 
+     *
      * @param textToDisplay the text to be formatted for display.
      */
     private void formatText(String textToDisplay) {
@@ -649,7 +649,7 @@ public class AdventureGameView {
 
         //write some code here to add images of objects in a given room to the objectsInRoom Vbox
         for (AdventureObject object: this.model.player.getCurrentRoom().objectsInRoom) {
-            Image image = new Image(this.model.getDirectoryName() + File.separator + "objectImages" + File.separator + object.getName() + ".jpg");
+            Image image = new Image("file:" + this.model.getDirectoryName() + File.separator + "objectImages" + File.separator + object.getName() + ".jpg");
             ImageView imageView = new ImageView();
             imageView.setImage(image);
             imageView.setFitWidth(100);
@@ -669,7 +669,7 @@ public class AdventureGameView {
 
         //write some code here to add images of objects in a player's inventory room to the objectsInInventory Vbox
         for (AdventureObject object: this.model.player.inventory) {
-            Image image = new Image(this.model.getDirectoryName() + File.separator + "objectImages" + File.separator + object.getName() + ".jpg");
+            Image image = new Image("file:" + this.model.getDirectoryName() + File.separator + "objectImages" + File.separator + object.getName() + ".jpg");
             ImageView imageView = new ImageView();
             imageView.setImage(image);
             imageView.setFitWidth(100);
@@ -775,6 +775,7 @@ public class AdventureGameView {
      * load button.
      */
     public void addLoadEvent() {
+
         loadButton.setOnAction(e -> {
             gridPane.requestFocus();
             LoadView loadView = new LoadView(this);
@@ -820,5 +821,38 @@ public class AdventureGameView {
             mediaPlayer.stop(); //shush!
             mediaPlaying = false;
         }
+    }
+
+    /**
+     * Getter for model.
+     * @return the adventure game model
+     */
+    public AdventureGame getModel() {
+        return model;
+    }
+
+    /**
+     * Getter for speech-to-text timeline.
+     * @return the speech-to-text timeline
+     */
+    public Timeline getTimeline() {
+        return timeline;
+    }
+
+
+    /**
+     * Setter for speech-to-text timeline.
+     * @param timeline the timelines to be set
+     */
+    public void setTimeline(Timeline timeline) {
+        this.timeline = timeline;
+    }
+
+    /**
+     * Getter for the stage.
+     * @return the stage
+     */
+    public Stage getStage() {
+        return stage;
     }
 }
