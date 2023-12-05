@@ -6,8 +6,6 @@ out/
 *.class
 .DS_Store
 */.DS_Store
-<<<<<<< HEAD
 *.ser
 */lib
-=======
->>>>>>> 309891c ([DEV-1.2] gitignore fixed)
+target/
