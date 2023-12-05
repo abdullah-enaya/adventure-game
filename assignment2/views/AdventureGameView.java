@@ -534,6 +534,13 @@ public class AdventureGameView {
         }
     }
 
+    /**
+     * Move into the blocked room after a minigame has been won.
+     *
+     * The passage is now unblocked and the player moves to
+     * the given room. The view is updated with the new
+     * room.
+     */
     public void minigameWin() {
         Passage afterMinigame = this.model.getAfterMinigame();
         afterMinigame.setBlocked(false);

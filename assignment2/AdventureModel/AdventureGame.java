@@ -94,12 +94,17 @@ public class AdventureGame implements Serializable {
      * movePlayer
      *
      * Moves the player in the given direction, if possible.
-     * Return -1 if the player wins or dies as a result of the move, or the level required (> 0) if
-     * the passage was blocked only because of the level, 0 otherwise.
+     * Return -1 if the player wins or dies as a result of the move,
+     * return -2 if the player encounters a minigame,
+     * the level required (> 0) if the passage was blocked
+     * only because of the level,
+     * 0 otherwise.
      *
      * @param direction the move command
-     * @return -1, if move results in death or a win (and game is over), or the level required (> 0) if
-     * the passage was blocked only because of the level, 0 otherwise.
+     * @return -2, if move results in minigame, -1, if move results in death or a win
+     * (and game is over), the level required (> 0) if
+     * the passage was blocked only because of the level,
+     * 0 otherwise.
      */
     public int movePlayer(String direction) {
         this.afterMinigame = null;
@@ -277,6 +282,11 @@ public class AdventureGame implements Serializable {
         this.helpText = help;
     }
 
+    /**
+     * getAfterMinigame
+     *
+     * @return the passage after the minigame has been won
+     */
     public Passage getAfterMinigame() {
         return afterMinigame;
     }
