@@ -24,8 +24,8 @@ public class SelectModelView {
      * <p>
      * Selects the game model.
      */
-    private Stage stage;
 
+    private Stage stage;
     private GridPane gridPane;
     private Label selectGameLabel;
     private Button selectGameButton;
@@ -36,6 +36,7 @@ public class SelectModelView {
     private AdventureGameView adventureGameView;
 
     private Button loadButton;
+
 
     /**
      * Adventure Select Model View Constructor
@@ -88,6 +89,9 @@ public class SelectModelView {
         gridPane.getColumnConstraints().addAll(column1, column2, column1);
         gridPane.getRowConstraints().addAll(row1, row2, row1);
 
+        column3.setHgrow( Priority.SOMETIMES ); //let some columns grow to take any extra space
+        column1.setHgrow( Priority.SOMETIMES );
+
         final Stage dialog = new Stage(); //dialogue box
         dialog.initModality(Modality.APPLICATION_MODAL);
         dialog.initOwner(this.stage);
@@ -121,12 +125,13 @@ public class SelectModelView {
         hBox.setAlignment(Pos.CENTER);
         gridPane.add(hBox, 1, 2);
 
-        var scene = new Scene(gridPane, 1000, 800);
+        var scene = new Scene( gridPane ,  1000, 800);
         scene.setFill(Color.BLACK);
         this.stage.setScene(scene);
         this.stage.setResizable(false);
         this.stage.show();
     }
+
 
     /**
      * This method handles the event related to the
@@ -241,6 +246,6 @@ public class SelectModelView {
     public AdventureGameView getAdventureGameView() {
         return adventureGameView;
     }
-
 }
+
 
