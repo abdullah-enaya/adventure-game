@@ -8,4 +8,3 @@ out/
 */.DS_Store
 *.ser
 */lib
-target/
