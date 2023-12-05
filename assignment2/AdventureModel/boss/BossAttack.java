@@ -11,7 +11,9 @@ public class BossAttack implements Command {
 
     @Override
     public String execute() {
-        bossFight.player.getHit(bossFight.boss.attack());
+        if (bossFight.player.getHit(bossFight.boss.attack())) {
+            this.bossFight.winner = 2;
+        }
         return "BOSS ATTACK " + attack;
     }
 }

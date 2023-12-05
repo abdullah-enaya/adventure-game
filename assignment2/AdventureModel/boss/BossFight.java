@@ -16,6 +16,7 @@ public class BossFight {
     public Character player;
     public boolean isPlayerTurn;
     public LinkedBlockingQueue<Command> commandQueue;
+    public int winner;
 
     public BossFight(Boss boss, Character playerCharacter, BossFightView view) {
         this.boss = boss;
@@ -23,6 +24,7 @@ public class BossFight {
         this.isPlayerTurn = false;
         this.view = view;
         this.commandQueue = new LinkedBlockingQueue<>();
+        this.winner = 0;
     }
 
     public boolean equipPlayerAbility(Ability ability) {
@@ -31,5 +33,9 @@ public class BossFight {
             ability.activateAbility(this);
             return true;
         } else return false;
+    }
+
+    public int checkIfDone() {
+        return winner;
     }
 }

@@ -11,7 +11,7 @@ public class Boss extends Character {
     public Boss() {
         this.title = "Boss";
         this.backstory = "Boss";
-        this.health = new HealthPoints(500, 1, 500);
+        this.health = new HealthPoints(80, 1, 500);
         this.attackDamage = 10;
         this.healingPoints = 1;
         this.specialItems = new ArrayList<>();

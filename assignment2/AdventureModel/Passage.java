@@ -35,7 +35,7 @@ public class Passage implements Serializable {
     /**
      * This stores boolean to represent if the passage is blocked.
      */
-    private boolean isBlocked;
+    public boolean isBlocked;
 
     /**
      * MotionTableEntry constructor.

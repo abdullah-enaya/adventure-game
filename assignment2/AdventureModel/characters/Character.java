@@ -20,8 +20,8 @@ public abstract class Character implements Serializable {
     public ArrayList<Ability> unlockedAbilities;
     public Ability equippedAbility;
 
-    public void getHit(int damage) {
-        this.equippedAbility.getHit(damage);
+    public boolean getHit(int damage) {
+        return this.equippedAbility.getHit(damage);
     }
 
     public int attack() {

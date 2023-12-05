@@ -12,7 +12,7 @@ public class Mage extends Character {
     public Mage() {
         this.title = "Mage";
         this.backstory = "Mage";
-        this.health = new HealthPoints(125, 3, 125);
+        this.health = new HealthPoints(90, 3, 125);
         this.attackDamage = 8;
         this.healingPoints = 5;
         this.specialItems = new ArrayList<>();

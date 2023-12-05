@@ -55,6 +55,7 @@ public class BossState implements GameState {
             this.bossFight.commandQueue.add(new PlayerHeal(this.bossFight));
             return null;
         }
+
         return "INVALID COMMAND.";
     }
 }

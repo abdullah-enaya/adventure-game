@@ -234,6 +234,10 @@ public class AdventureGameView {
         healthPause.setOnFinished(actionEvent -> {
             updateHealth();
             healthPause.play();
+            if (this.model.gameState == null && this.bossView != null) {
+                this.bossView = null;
+                updateScene("FIGHT OVER.");
+            }
         });
         healthPause.play();
         updateItems(); //update items shows inventory and objects in rooms
@@ -493,7 +497,7 @@ public class AdventureGameView {
         //try to move!
         String output = this.model.interpretAction(text); //process the command!
 
-        if (output.equals("FIGHT WON")) {
+        if (output != null && output.equals("FIGHT WON")) {
             this.bossView = null;
             this.updateScene(output);
         }
@@ -505,7 +509,7 @@ public class AdventureGameView {
             return;
         }
 
-        if (output == null || (!output.equals("GAME OVER") && !output.equals("FORCED") && !output.equals("HELP"))) {
+        if (output == null || (!output.equals("GAME OVER") && !output.equals("FORCED") && !output.equals("HELP") && !output.equals("BOSS START"))) {
             updateScene(output);
             updateItems();
         } else if (output.equals("GAME OVER")) {

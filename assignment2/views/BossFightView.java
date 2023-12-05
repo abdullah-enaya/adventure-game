@@ -37,12 +37,12 @@ public class BossFightView {
     public BossFightView(AdventureGame model) {
         this.model = model;
         
-        Image characeterImage = new Image("Assets/characterImages/" + this.model.player.character.title + ".png");
+        Image characeterImage = new Image("file:Assets/characterImages/" + this.model.player.character.title + ".png");
         characterSprite = new ImageView(characeterImage);
         characterSprite.setFitWidth(150);
         characterSprite.setPreserveRatio(true);
 
-        Image bossImage = new Image("Assets/Boss.png");
+        Image bossImage = new Image("file:Assets/Boss.png");
         bossSprite = new ImageView(bossImage);
         bossSprite.setFitWidth(150);
         bossSprite.setPreserveRatio(true);
@@ -73,6 +73,16 @@ public class BossFightView {
         bossFight.commandQueue.add(new BossAttack(bossFight, ""));
         PauseTransition pauseTransition = new PauseTransition(Duration.seconds(3));
         pauseTransition.setOnFinished(actionEvent -> {
+            int result = this.bossFight.checkIfDone();
+            if (result == 1) {
+                this.model.gameState = null;
+                this.model.after.isBlocked = false;
+                this.model.movePlayer(this.model.after.getDirection());
+                return;
+            } else if (result == 2) {
+                this.model.gameState = null;
+                return;
+            }
             try {
                 this.updateView(this.bossFight.commandQueue.remove().execute());
                 if (this.bossFight.commandQueue.isEmpty()) {
@@ -114,7 +124,7 @@ public class BossFightView {
     public void fireball() {
         bossFightLabel.setText("You throw a fireball!");
 
-        Image fireballImage = new Image("Assets/Fireball.png");
+        Image fireballImage = new Image("file:Assets/Fireball.png");
 
         ImageView fireballSprite = new ImageView(fireballImage);
         fireballSprite.setFitWidth(150);

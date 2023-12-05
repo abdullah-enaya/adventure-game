@@ -24,9 +24,9 @@ public abstract class Ability {
         return (int) (character.attackDamage * healBoost);
     }
 
-    public void getHit(int damage) {
+    public boolean getHit(int damage) {
         useAbility();
-        character.health.removeHP((int) (damage / defenseBoost));
+        return character.health.removeHP((int) (damage / defenseBoost));
     }
 
     public void heal() {
