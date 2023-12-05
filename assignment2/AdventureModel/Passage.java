@@ -119,4 +119,8 @@ public class Passage implements Serializable {
     public void printPassage() {
         System.out.println(this.direction + " " + this.destinationRoom + " " + this.keyName + " " + this.isBlocked);
     }
+
+    public void setBlocked(boolean blocked) {
+        isBlocked = blocked;
+    }
 }
