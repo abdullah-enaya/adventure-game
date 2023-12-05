@@ -10,10 +10,7 @@ import javafx.animation.KeyFrame;
 import AdventureModel.*;
 import AdventureModel.character.Character;
 import AdventureModel.character.CharacterFactory;
-import AdventureModel.character.Damage;
-import AdventureModel.character.Mage;
-import AdventureModel.character.Tank;
-import Minigame.Snake;
+import Minigame.SnakeView;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -22,7 +19,6 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.media.Media;
@@ -42,13 +38,19 @@ import java.io.File;
 import java.util.ArrayList;
 import java.io.*;
 
-
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
 import SpeechToText.*;
+
+import javafx.application.Application;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 /**
  * Class AdventureGameView.
@@ -496,7 +498,7 @@ public class AdventureGameView {
         String output = this.model.interpretAction(text); //process the command!
 
         if (output != null && output.equalsIgnoreCase("MINIGAME1")) {
-            Snake snake = new Snake(this, 1);
+            SnakeView snakeView = new SnakeView(this, 1);
             return;
         }
 

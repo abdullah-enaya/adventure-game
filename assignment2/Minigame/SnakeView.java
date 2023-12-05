@@ -21,8 +21,10 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
-
-public class Snake {
+/**
+ * Class SnakeView. Handles all the necessary tasks to run the minigame Snake.
+ */
+public class SnakeView {
 
     private AdventureGameView view;
     private Stage primaryStage;
@@ -36,7 +38,7 @@ public class Snake {
     private static final int RIGHT = 0, LEFT = 1, UP = 2, DOWN = 3;
 
     private GraphicsContext gc;
-    private List<Point> snakeBody = new ArrayList();
+    private List<Point> snakeBody;
     private Point snakeHead;
     private Image foodImage;
     private int foodX;
@@ -45,11 +47,20 @@ public class Snake {
     private int currentDirection;
     private int score = 0;
 
-    private int goal;
+    private final int goal;
 
-    public Snake(AdventureGameView view, int goal) {
+    /**
+     * SnakeView Constructor
+     *
+     * Initializes attributes
+     *
+     * @param view the view of the adventure game
+     * @param goal the needed score to win the minigame
+     */
+    public SnakeView(AdventureGameView view, int goal) {
         this.view = view;
         this.goal = goal;
+        this.snakeBody = new ArrayList<>();
 
         primaryStage = new Stage(); //dialogue box
         primaryStage.initModality(Modality.APPLICATION_MODAL);
@@ -89,6 +100,9 @@ public class Snake {
         this.startGame();
     }
 
+    /**
+     * Starts the Snake minigame.
+     */
     public void startGame() {
         this.hasWon = false;
 
@@ -106,6 +120,10 @@ public class Snake {
         timeline.play();
     }
 
+    /**
+     * Update the UI given a specific move.
+     * @param gc the graphic context that is being updated
+     */
     private void run(GraphicsContext gc) {
         if (gameOver) {
             gc.setFill(Color.RED);
@@ -135,7 +153,7 @@ public class Snake {
             return;
         }
 
-        initGUI(gc);
+        initGrid(gc);
         drawFood(gc);
         drawSnake(gc);
         drawScore();
@@ -164,7 +182,11 @@ public class Snake {
         eatFood();
     }
 
-    private void initGUI(GraphicsContext gc) {
+    /**
+     * Initialize the background grid.
+     * @param gc the graphics context to be updated
+     */
+    private void initGrid(GraphicsContext gc) {
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLS; j++) {
                 if ((i + j) % 2 == 0) {
@@ -177,6 +199,9 @@ public class Snake {
         }
     }
 
+    /**
+     * Generate the food on the grid.
+     */
     private void generateFood() {
         while (true) {
             boolean generateAgain = false;
@@ -200,52 +225,86 @@ public class Snake {
         }
     }
 
+    /**
+     * Draw the food on the grid.
+     * @param gc the graphics context to be updated
+     */
     private void drawFood(GraphicsContext gc) {
         gc.drawImage(foodImage, foodX * SQUARE_SIZE, foodY * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
     }
 
+    /**
+     * Draw the snake on the grid.
+     * @param gc the graphics context to be updated
+     */
     private void drawSnake(GraphicsContext gc) {
         gc.setFill(Color.web("673147"));
         gc.fillRoundRect
-                (snakeHead.getX() * SQUARE_SIZE, snakeHead.getY() * SQUARE_SIZE, SQUARE_SIZE - 1, SQUARE_SIZE - 1, 35, 35);
+                (snakeHead.getX() * SQUARE_SIZE,
+                        snakeHead.getY() * SQUARE_SIZE, SQUARE_SIZE - 1,
+                        SQUARE_SIZE - 1, 35, 35);
 
         for (int i = 1; i < snakeBody.size(); i++) {
             gc.fillRoundRect
-                    (snakeBody.get(i).getX() * SQUARE_SIZE, snakeBody.get(i).getY() * SQUARE_SIZE, SQUARE_SIZE - 1,
+                    (snakeBody.get(i).getX() * SQUARE_SIZE,
+                            snakeBody.get(i).getY() * SQUARE_SIZE, SQUARE_SIZE - 1,
                     SQUARE_SIZE - 1, 20, 20);
         }
     }
 
+    /**
+     * Update the x coordinate by increasing it by 1.
+     */
     private void moveRight() {
         snakeHead.x++;
     }
 
+    /**
+     * Update the x coordinate by decreasing it by 1.
+     */
     private void moveLeft() {
         snakeHead.x--;
     }
 
+    /**
+     * Update the y coordinate by decreasing it by 1.
+     */
     private void moveUp() {
         snakeHead.y--;
     }
 
+    /**
+     * Update the y coordinate by decreasing it by 1.
+     */
     private void moveDown() {
         snakeHead.y++;
     }
 
+    /**
+     * Sets the attribute gameOver to true iff
+     * the snake goes out of the grid, or
+     * the snake destroys itself.
+     */
     public void gameOver() {
-        if (snakeHead.x < 0 || snakeHead.y < 0 || snakeHead.x * SQUARE_SIZE >= WIDTH || snakeHead.y * SQUARE_SIZE >= HEIGHT) {
+        if (snakeHead.x < 0 || snakeHead.y < 0 ||
+                snakeHead.x * SQUARE_SIZE >= WIDTH ||
+                snakeHead.y * SQUARE_SIZE >= HEIGHT) {
             gameOver = true;
         }
 
-        //destroy itself
         for (int i = 1; i < snakeBody.size(); i++) {
-            if (snakeHead.x == snakeBody.get(i).getX() && snakeHead.getY() == snakeBody.get(i).getY()) {
+            if (snakeHead.x == snakeBody.get(i).getX() &&
+                    snakeHead.getY() == snakeBody.get(i).getY()) {
                 gameOver = true;
                 break;
             }
         }
     }
 
+    /**
+     * Increase the body of the snake, consume the food and
+     * generate new food.
+     */
     private void eatFood() {
         if (snakeHead.getX() == foodX && snakeHead.getY() == foodY) {
             snakeBody.add(new Point(-1, -1));
@@ -254,13 +313,12 @@ public class Snake {
         }
     }
 
+    /**
+     * Draw the current score on the grid.
+     */
     private void drawScore() {
         gc.setFill(Color.WHITE);
         gc.setFont(new Font("Arial", 35));
         gc.fillText("Score: " + score, 10, 35);
-    }
-
-    public boolean hasWon() {
-        return this.hasWon;
     }
 }
