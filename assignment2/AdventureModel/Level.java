@@ -1,6 +1,6 @@
 package AdventureModel;
 
-import Exceptions.NegativeXPException;
+import Exceptions.NegativeValueException;
 
 import java.io.Serializable;
 
@@ -57,7 +57,7 @@ public class Level implements Serializable {
      */
     public boolean addXP(int xp) {
         if (xp < 0) {
-            throw new NegativeXPException();
+            throw new NegativeValueException();
         }
         this.xp += xp;
 
@@ -78,7 +78,7 @@ public class Level implements Serializable {
      */
     public boolean removeXP(int xp) {
         if (xp < 0) {
-            throw new NegativeXPException();
+            throw new NegativeValueException();
         }
         this.xp -= xp;
 

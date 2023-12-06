@@ -1,6 +1,6 @@
 package AdventureModel;
 
-import AdventureModel.character.Character;
+import AdventureModel.characters.Character;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -27,6 +27,9 @@ public class Player implements Serializable {
      */
     private Level level;
 
+    /**
+     * The hp of the player
+     */
     /**
      * Adventure Game Player Constructor
      */

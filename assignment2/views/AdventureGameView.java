@@ -11,6 +11,10 @@ import AdventureModel.*;
 import AdventureModel.character.Character;
 import AdventureModel.character.CharacterFactory;
 import Minigame.SnakeView;
+import AdventureModel.BossState;
+import AdventureModel.characters.Character;
+import AdventureModel.characters.CharacterFactory;
+import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -51,6 +55,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import java.util.NoSuchElementException;
 
 /**
  * Class AdventureGameView.
@@ -70,9 +75,12 @@ public class AdventureGameView {
     VBox objectsInRoom = new VBox(); //to hold room items
     VBox objectsInInventory = new VBox(); //to hold inventory items
     ImageView roomImageView; //to hold room image
+    BossFightView bossView; //to hold boss fight view
     TextField inputTextField; //for user input
     Label levelLabel, xpLabel;
     ProgressBar xpBar;
+    PauseTransition pause;
+
     private MediaPlayer mediaPlayer; //to play audio
     private boolean mediaPlaying; //to know if the audio is playing
 
@@ -228,8 +236,16 @@ public class AdventureGameView {
         gridPane.add(levelView, 0, 2, 3, 1);
 
         updateScene("You have selected: " + this.model.player.character.title); //method displays an image and whatever text is supplied
-        PauseTransition pause = new PauseTransition(Duration.seconds(3));
-        pause.setOnFinished(actionEvent -> updateScene(null));
+        pause = new PauseTransition(Duration.seconds(3));
+        this.objectsInInventory.setDisable(true);
+        this.objectsInRoom.setDisable(true);
+        this.inputTextField.setDisable(true);
+        pause.setOnFinished(actionEvent -> {
+            updateScene(null);
+            this.objectsInInventory.setDisable(false);
+            this.objectsInRoom.setDisable(false);
+            this.inputTextField.setDisable(false);
+        });
         pause.play();
         updateItems(); //update items shows inventory and objects in rooms
 
@@ -494,15 +510,19 @@ public class AdventureGameView {
             return;
         }
 
+
         //try to move!
         String output = this.model.interpretAction(text); //process the command!
 
-        if (output != null && output.equalsIgnoreCase("MINIGAME1")) {
-            SnakeView snakeView = new SnakeView(this, 1);
+        if (bossView != null) {
+            if (output != null) {
+                bossView.bossFightLabel.setText(output);
+            }
             return;
         }
 
-        if (output == null || (!output.equals("GAME OVER") && !output.equals("FORCED") && !output.equals("HELP"))) {
+        if (output == null || (!output.equals("GAME OVER") && !output.equals("FORCED") && !output.equals("HELP")
+                && !output.equals("BOSS START") && !output.equals("MINIGAME1"))) {
             updateScene(output);
             updateItems();
         } else if (output.equals("GAME OVER")) {
@@ -531,6 +551,21 @@ public class AdventureGameView {
                 this.submitEvent("FORCED");
             });
             pause.play();
+        } else if (output.equals("BOSS START")) {
+            this.bossView = new BossFightView(this, this.model);
+            this.objectsInRoom.setDisable(true);
+            this.objectsInInventory.setDisable(true);
+            this.saveButton.setDisable(true);
+            updateScene("You encounter a boss!");
+            PauseTransition transition = new PauseTransition(Duration.seconds(1.5));
+            transition.setOnFinished(actionEvent -> {
+                this.gridPane.add(bossView.bossPane, 1, 1, 1, 1);
+                this.model.gameState = new BossState(model, bossView.bossFight);
+            });
+            transition.play();
+        } else if (output.equals("MINIGAME1")) {
+            SnakeView snakeView = new SnakeView(this, 1);
+            return;
         }
     }
 
@@ -542,14 +577,14 @@ public class AdventureGameView {
      * room.
      */
     public void minigameWin() {
-        Passage afterMinigame = this.model.getAfterMinigame();
+        Passage afterMinigame = this.model.getAfter();
         afterMinigame.setBlocked(false);
 
         int destinationRoom = afterMinigame.getDestinationRoom();
         Room roomToVisit = this.model.getRooms().get(destinationRoom);
         this.model.player.setCurrentRoom(roomToVisit);
 
-        updateScene(roomToVisit.getRoomDescription());
+        updateScene();
         updateItems();
     }
 
@@ -579,8 +614,12 @@ public class AdventureGameView {
      * @param textToDisplay the text to display below the image.
      */
     public void updateScene(String textToDisplay) {
+        if (bossView != null) {
+            return;
+        }
 
         getRoomImage(); //get the image of the current room
+
         formatText(textToDisplay); //format the text to display
         roomDescLabel.setPrefWidth(500);
         roomDescLabel.setPrefHeight(500);
@@ -613,7 +652,7 @@ public class AdventureGameView {
         double xpRatio = (double) this.model.player.getLevel().getXP() / this.model.player.getLevel().getXPToNextLevel();
         xpBar.setProgress(xpRatio);
 
-        xpLabel.setText("(" + this.model.player.getLevel().getXPString() + ")");
+        xpLabel.setText("(" + this.model.player.getLevel().getXPString() + "). You have lives (" + this.model.player.character.health.getLives() + ")" );
         xpLabel.setStyle("-fx-text-fill: white;");
         xpLabel.setFont(new Font("Arial", 16));
 
@@ -627,6 +666,7 @@ public class AdventureGameView {
             pause.play();
         }
     }
+
 
     /**
      * formatText
@@ -659,6 +699,7 @@ public class AdventureGameView {
     private void getRoomImage() {
 
         int roomNumber = this.model.getPlayer().getCurrentRoom().getRoomNumber();
+
         String roomImage = this.model.getDirectoryName() + File.separator + "room-images" + File.separator + roomNumber + ".png";
 
         Image roomImageFile = new Image(roomImage);
@@ -683,8 +724,8 @@ public class AdventureGameView {
         this.objectsInRoom.getChildren().clear();
 
         //write some code here to add images of objects in a given room to the objectsInRoom Vbox
-        for (AdventureObject object : this.model.player.getCurrentRoom().objectsInRoom) {
-            Image image = new Image(this.model.getDirectoryName() + File.separator + "objectImages" + File.separator + object.getName() + ".jpg");
+        for (AdventureObject object: this.model.player.getCurrentRoom().objectsInRoom) {
+            Image image = new Image( this.model.getDirectoryName() + "/objectImages/" + object.getName() + ".jpg");
             ImageView imageView = new ImageView();
             imageView.setImage(image);
             imageView.setFitWidth(100);
