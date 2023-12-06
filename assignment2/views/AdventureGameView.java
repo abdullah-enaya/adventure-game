@@ -637,7 +637,7 @@ public class AdventureGameView {
         updateLevel();
 
         //play background music
-        String musicPath = ("/" + this.model.getDirectoryName() + "/music/" + (this.model.getPlayer().getCurrentRoom().getRoomName()).toLowerCase() + "-background.mp3").replace(" ","-");
+        String musicPath = (this.model.getDirectoryName() + "/music/" + (this.model.getPlayer().getCurrentRoom().getRoomName()).toLowerCase() + "-background.mp3").replace(" ","-");
         backgroundMusic.playMusic(musicPath);
 
         //finally, articulate the description
@@ -882,8 +882,9 @@ public class AdventureGameView {
         String adventureName = this.model.getDirectoryName();
         String roomName = this.model.getPlayer().getCurrentRoom().getRoomName();
 
-        musicFile = "./" + adventureName + "/sounds/" + roomName.toLowerCase() + "-long.mp3";
-        musicFile = musicFile.replace(" ", "-");
+        if (!this.model.getPlayer().getCurrentRoom().getVisited()) musicFile = this.model.getDirectoryName() + "/sounds/" + roomName.toLowerCase() + "-long.mp3" ;
+        else musicFile = this.model.getDirectoryName() + "/sounds/" + roomName.toLowerCase() + "-short.mp3" ;
+        musicFile = musicFile.replace(" ","-");
 
         Media sound = new Media(new File(musicFile).toURI().toString());
 
