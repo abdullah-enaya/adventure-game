@@ -11,6 +11,8 @@ import AdventureModel.BossState;
 import AdventureModel.characters.Character;
 import AdventureModel.characters.CharacterFactory;
 import javafx.animation.KeyFrame;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -33,7 +35,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 import javafx.scene.AccessibleRole;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.io.*;
@@ -82,6 +83,8 @@ public class AdventureGameView {
 
     SPTContext sptContext;
 
+    private MediaPlayer musicPlayer; //to play audio
+    private boolean musicPlaying; //to know if the audio is playing
 
 
     /**
@@ -631,6 +634,24 @@ public class AdventureGameView {
 
         updateLevel();
 
+        //play background music
+        String adventureName = this.model.getDirectoryName();
+        String roomName = this.model.getPlayer().getCurrentRoom().getRoomName();
+        String musicPath = "/CSC207/group_74/assignment2/" + adventureName + "/music/" + roomName.toLowerCase() + "-background.mp3";
+        //"./" + adventureName + "/music/" + roomName.toLowerCase() + "-background.mp3";
+        musicPath = musicPath.replace(" ","-");
+        Media musicMedia = new Media(new File(musicPath).toURI().toString());  
+        
+        if (musicPlaying == true){
+            Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(3), new KeyValue(musicPlayer.volumeProperty(), 0)));
+            timeline.play();
+        }
+
+        musicPlayer = new MediaPlayer(musicMedia);
+        musicPlayer.setVolume(0.7);
+        musicPlayer.play();
+        musicPlaying = true;
+
         //finally, articulate the description
         if (textToDisplay == null || textToDisplay.isBlank()) articulateRoomDescription();
     }
@@ -740,8 +761,8 @@ public class AdventureGameView {
         }
 
         //write some code here to add images of objects in a player's inventory room to the objectsInInventory Vbox
-        for (AdventureObject object : this.model.player.inventory) {
-            Image image = new Image(this.model.getDirectoryName() + File.separator + "objectImages" + File.separator + object.getName() + ".jpg");
+        for (AdventureObject object: this.model.player.inventory) {
+            Image image = new Image(this.model.getDirectoryName() + "/objectImages/" + object.getName() + ".jpg");
             ImageView imageView = new ImageView();
             imageView.setImage(image);
             imageView.setFitWidth(100);

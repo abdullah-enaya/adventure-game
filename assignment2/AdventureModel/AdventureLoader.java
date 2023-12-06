@@ -109,8 +109,6 @@ public class AdventureLoader {
      * Parse Objects File
      */
     public void parseObjects() throws IOException {
-
-        
         String objectFileName = this.adventureName + File.separator + "objects.txt";
         BufferedReader buff = new BufferedReader(new FileReader(objectFileName));
 
@@ -187,7 +185,7 @@ public class AdventureLoader {
      */
     public String parseOtherFile(String fileName) throws IOException {
         String text = "";
-        fileName = this.adventureName + "/" + fileName + ".txt";
+        fileName = "C:/CSC207/group_74/assignment2/" + this.adventureName + "/" + fileName + ".txt"; // placeholder to get code to run, delete when done;
         BufferedReader buff = new BufferedReader(new FileReader(fileName));
         String line = buff.readLine();
         while (line != null) { // while not EOF
