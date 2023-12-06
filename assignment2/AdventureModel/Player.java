@@ -100,8 +100,8 @@ public class Player implements Serializable {
         for(int i = 0; i<this.inventory.size();i++){
             if(this.inventory.get(i).getName().equals(s)) {
                 this.currentRoom.addGameObject(this.inventory.get(i));
-                this.inventory.remove(i);
                 this.character.attackDamage -= this.inventory.get(i).getBoostAttack();
+                this.inventory.remove(i);
             }
         }
     }

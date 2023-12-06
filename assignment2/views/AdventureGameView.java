@@ -246,6 +246,7 @@ public class AdventureGameView {
             this.objectsInInventory.setDisable(false);
             this.objectsInRoom.setDisable(false);
             this.inputTextField.setDisable(false);
+            this.saveButton.setDisable(false);
         });
         pause.play();
         updateItems(); //update items shows inventory and objects in rooms
@@ -562,11 +563,22 @@ public class AdventureGameView {
             transition.setOnFinished(actionEvent -> {
                 this.gridPane.add(bossView.bossPane, 1, 1, 1, 1);
                 this.model.gameState = new BossState(model, bossView.bossFight);
+                String musicPath = (this.model.getDirectoryName() + "/music/boss-background.mp3");
+                backgroundMusic.playMusic(musicPath);
             });
             transition.play();
         } else if (output.equals("MINIGAME1")) {
-            SnakeView snakeView = new SnakeView(this, 1);
-            return;
+            updateScene("You encounter a minigame!");
+            this.objectsInRoom.setDisable(true);
+            this.objectsInInventory.setDisable(true);
+            this.saveButton.setDisable(true);
+            PauseTransition transition = new PauseTransition(Duration.seconds(1.5));
+            transition.setOnFinished(actionEvent -> {
+                SnakeView snakeView = new SnakeView(this, 3);
+                String musicPath = (this.model.getDirectoryName() + "/music/" + output.toLowerCase() + "-background.mp3");
+                backgroundMusic.playMusic(musicPath);
+            });
+            transition.play();
         }
     }
 
@@ -585,8 +597,9 @@ public class AdventureGameView {
         Room roomToVisit = this.model.getRooms().get(destinationRoom);
         this.model.player.setCurrentRoom(roomToVisit);
 
-        updateScene(null);
+        updateScene("YOU WON!");
         updateItems();
+        pause.play();
     }
 
     /**
@@ -882,9 +895,8 @@ public class AdventureGameView {
         String adventureName = this.model.getDirectoryName();
         String roomName = this.model.getPlayer().getCurrentRoom().getRoomName();
 
-        if (!this.model.getPlayer().getCurrentRoom().getVisited()) musicFile = this.model.getDirectoryName() + "/sounds/" + roomName.toLowerCase() + "-long.mp3" ;
-        else musicFile = this.model.getDirectoryName() + "/sounds/" + roomName.toLowerCase() + "-short.mp3" ;
-        musicFile = musicFile.replace(" ","-");
+        musicFile = "./" + adventureName + "/sounds/" + roomName.toLowerCase() + "-long.mp3";
+        musicFile = musicFile.replace(" ", "-");
 
         Media sound = new Media(new File(musicFile).toURI().toString());
 

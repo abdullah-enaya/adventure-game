@@ -155,7 +155,6 @@ public class BossFightView {
                 view.bossView = null;
                 view.saveButton.setDisable(false);
                 view.updateScene("FIGHT OVER. YOU LOST.");
-                view.updateItems();
                 view.pause.play();
                 if (this.model.player.character.health.getLives() == 0) {
                     PauseTransition quit = new PauseTransition(Duration.seconds(2));
