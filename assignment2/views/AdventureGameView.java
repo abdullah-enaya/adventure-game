@@ -11,6 +11,9 @@ import AdventureModel.BossState;
 import AdventureModel.characters.Character;
 import AdventureModel.characters.CharacterFactory;
 import javafx.animation.KeyFrame;
+import AdventureModel.BackgroundMusic;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -33,7 +36,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 import javafx.scene.AccessibleRole;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.io.*;
@@ -82,6 +84,9 @@ public class AdventureGameView {
 
     SPTContext sptContext;
 
+    private MediaPlayer musicPlayer; //to play audio
+    private boolean musicPlaying; //to know if the audio is playing
+    private AdventureModel.BackgroundMusic backgroundMusic = new BackgroundMusic(); // background music player
 
 
     /**
@@ -241,6 +246,7 @@ public class AdventureGameView {
             this.objectsInInventory.setDisable(false);
             this.objectsInRoom.setDisable(false);
             this.inputTextField.setDisable(false);
+            this.saveButton.setDisable(false);
         });
         pause.play();
         updateItems(); //update items shows inventory and objects in rooms
@@ -557,11 +563,22 @@ public class AdventureGameView {
             transition.setOnFinished(actionEvent -> {
                 this.gridPane.add(bossView.bossPane, 1, 1, 1, 1);
                 this.model.gameState = new BossState(model, bossView.bossFight);
+                String musicPath = (this.model.getDirectoryName() + "/music/boss-background.mp3");
+                backgroundMusic.playMusic(musicPath);
             });
             transition.play();
         } else if (output.equals("MINIGAME1")) {
-            SnakeView snakeView = new SnakeView(this, 1);
-            return;
+            updateScene("You encounter a minigame!");
+            this.objectsInRoom.setDisable(true);
+            this.objectsInInventory.setDisable(true);
+            this.saveButton.setDisable(true);
+            PauseTransition transition = new PauseTransition(Duration.seconds(1.5));
+            transition.setOnFinished(actionEvent -> {
+                SnakeView snakeView = new SnakeView(this, 3);
+                String musicPath = (this.model.getDirectoryName() + "/music/" + output.toLowerCase() + "-background.mp3");
+                backgroundMusic.playMusic(musicPath);
+            });
+            transition.play();
         }
     }
 
@@ -580,8 +597,9 @@ public class AdventureGameView {
         Room roomToVisit = this.model.getRooms().get(destinationRoom);
         this.model.player.setCurrentRoom(roomToVisit);
 
-        updateScene(null);
+        updateScene("YOU WON!");
         updateItems();
+        pause.play();
     }
 
     /**
@@ -597,7 +615,7 @@ public class AdventureGameView {
     }
 
 
-    /**
+    /*
      * updateScene
      * __________________________
      * <p>
@@ -630,6 +648,10 @@ public class AdventureGameView {
         stage.sizeToScene();
 
         updateLevel();
+
+        //play background music
+        String musicPath = (this.model.getDirectoryName() + "/music/" + (this.model.getPlayer().getCurrentRoom().getRoomName()).toLowerCase() + "-background.mp3").replace(" ","-");
+        backgroundMusic.playMusic(musicPath);
 
         //finally, articulate the description
         if (textToDisplay == null || textToDisplay.isBlank()) articulateRoomDescription();
@@ -740,8 +762,8 @@ public class AdventureGameView {
         }
 
         //write some code here to add images of objects in a player's inventory room to the objectsInInventory Vbox
-        for (AdventureObject object : this.model.player.inventory) {
-            Image image = new Image(this.model.getDirectoryName() + File.separator + "objectImages" + File.separator + object.getName() + ".jpg");
+        for (AdventureObject object: this.model.player.inventory) {
+            Image image = new Image(this.model.getDirectoryName() + "/objectImages/" + object.getName() + ".jpg");
             ImageView imageView = new ImageView();
             imageView.setImage(image);
             imageView.setFitWidth(100);

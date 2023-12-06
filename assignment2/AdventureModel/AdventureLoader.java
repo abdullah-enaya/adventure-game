@@ -42,7 +42,7 @@ public class AdventureLoader {
 
         int roomNumber;
 
-        String roomFileName = this.adventureName + File.separator + "rooms.txt";
+        String roomFileName = game.getDirectoryName() + "/rooms.txt"; // placeholder to get code to run, delete when done
         BufferedReader buff = new BufferedReader(new FileReader(roomFileName));
 
         while (buff.ready()) {
@@ -109,9 +109,7 @@ public class AdventureLoader {
      * Parse Objects File
      */
     public void parseObjects() throws IOException {
-
-        
-        String objectFileName = this.adventureName + File.separator + "objects.txt";
+        String objectFileName = game.getDirectoryName() + "/objects.txt";
         BufferedReader buff = new BufferedReader(new FileReader(objectFileName));
 
         while (buff.ready()) {
@@ -167,7 +165,7 @@ public class AdventureLoader {
      * Parse Synonyms File
      */
     public void parseSynonyms() throws IOException {
-        String synonymsFileName = this.adventureName + File.separator + "synonyms.txt";
+        String synonymsFileName = game.getDirectoryName() + "/synonyms.txt"; // placeholder to get code to run, delete when done;
         BufferedReader buff = new BufferedReader(new FileReader(synonymsFileName));
         String line = buff.readLine();
         while(line != null){
@@ -187,7 +185,7 @@ public class AdventureLoader {
      */
     public String parseOtherFile(String fileName) throws IOException {
         String text = "";
-        fileName = this.adventureName + "/" + fileName + ".txt";
+        fileName = game.getDirectoryName() + "/" + fileName + ".txt"; // placeholder to get code to run, delete when done;
         BufferedReader buff = new BufferedReader(new FileReader(fileName));
         String line = buff.readLine();
         while (line != null) { // while not EOF

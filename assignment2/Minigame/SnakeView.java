@@ -97,7 +97,11 @@ public class SnakeView {
         });
 
         primaryStage.show();
-        this.startGame();
+        PauseTransition buffer = new PauseTransition(Duration.seconds(4));
+        buffer.setOnFinished(actionEvent -> {
+            this.startGame();
+        });
+        buffer.play();
     }
 
     /**
@@ -133,6 +137,9 @@ public class SnakeView {
 
             PauseTransition pause = new PauseTransition(Duration.seconds(3));
             pause.setOnFinished(actionEvent -> primaryStage.close());
+            pause.play();
+
+            view.updateScene("YOU LOST.");
             pause.play();
             return;
         }
