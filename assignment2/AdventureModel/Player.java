@@ -101,6 +101,7 @@ public class Player implements Serializable {
             if(this.inventory.get(i).getName().equals(s)) {
                 this.currentRoom.addGameObject(this.inventory.get(i));
                 this.inventory.remove(i);
+                this.character.attackDamage -= this.inventory.get(i).getBoostAttack();
             }
         }
     }
