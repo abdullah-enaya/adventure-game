@@ -15,8 +15,8 @@ import javafx.util.Duration;
 public class BackgroundMusic{
     protected double volume = 0.3;
     protected int fadeLenght = 3;
-    protected boolean musicPlaying = false;
-    private MediaPlayer musicPlayer;
+    public boolean musicPlaying = false;
+    public MediaPlayer musicPlayer;
 
     /**
      * Play the music at the music path

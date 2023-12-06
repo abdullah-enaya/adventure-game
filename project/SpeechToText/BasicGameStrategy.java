@@ -68,6 +68,7 @@ public class BasicGameStrategy extends SPTStrategy{
                 if (timeline.getStatus().equals(Animation.Status.RUNNING)) {
                     timeline.stop();
                 } else {
+                    this.view.stopArticulation();
                     timeline.play();
                 }
             }

@@ -7,7 +7,7 @@ import AdventureModel.characters.Character;
  * ArmourUp Ability class.
  */
 public class ArmourUp extends Ability{
-    int movesLeft;
+    private int movesLeft;
 
     /**
      * Initializes ArmourUp ability.

@@ -915,6 +915,9 @@ public class AdventureGameView {
             mediaPlayer.stop(); //shush!
             mediaPlaying = false;
         }
+        if (backgroundMusic.musicPlaying) {
+            backgroundMusic.musicPlayer.stop();
+        }
     }
 
     /**
