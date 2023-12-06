@@ -11,8 +11,10 @@ public class AdventureGame implements Serializable {
     private String helpText; //A variable to store the Help text of the game. This text is displayed when the user types "HELP" command.
     private final HashMap<Integer, Room> rooms; //A list of all the rooms in the game.
     private HashMap<String,String> synonyms = new HashMap<>(); //A HashMap to store synonyms of commands.
-    private final String[] actionVerbs = {"QUIT","INVENTORY","TAKE","DROP","LEVEL"}; //List of action verbs (other than motions) that exist in all games. Motion vary depending on the room and game.
+    public final String[] actionVerbs = {"QUIT","INVENTORY","TAKE","DROP","LEVEL"}; //List of action verbs (other than motions) that exist in all games. Motion vary depending on the room and game.
     public Player player; //The Player of the game.
+    public GameState gameState;
+    public Passage after;
 
     /**
      * Adventure Game Constructor
@@ -24,7 +26,7 @@ public class AdventureGame implements Serializable {
     public AdventureGame(String name){
         this.synonyms = new HashMap<>();
         this.rooms = new HashMap<>();
-        this.directoryName = "Games" + File.separator + name; //all games files are in the Games directory!
+        this.directoryName = "Games/" + name; //all games files are in the Games directory!
         try {
             setUpGame();
         } catch (IOException e) {
@@ -34,7 +36,7 @@ public class AdventureGame implements Serializable {
 
     /**
      * Save the current state of the game to a file
-     * 
+     *
      * @param file pointer to file to write to
      */
     public void saveModel(File file) {
@@ -93,14 +95,21 @@ public class AdventureGame implements Serializable {
      * movePlayer
      *
      * Moves the player in the given direction, if possible.
-     * Return -1 if the player wins or dies as a result of the move, or the level required (> 0) if
-     * the passage was blocked only because of the level, 0 otherwise.
+     * Return -1 if the player wins or dies as a result of the move,
+     * return -2 if the player encounters a minigame,
+     * retuen -3 if the player encounters a boss.
+     * the level required (> 0) if the passage was blocked
+     * only because of the level,
+     * 0 otherwise.
      *
      * @param direction the move command
-     * @return -1, if move results in death or a win (and game is over), or the level required (> 0) if
-     * the passage was blocked only because of the level, 0 otherwise.
+     * @return -3, if move results in a boss fight, -2, if move results in minigame, -1, if move results in death or a win
+     * (and game is over), the level required (> 0) if
+     * the passage was blocked only because of the level,
+     * 0 otherwise.
      */
     public int movePlayer(String direction) {
+        this.after = null;
 
         direction = direction.toUpperCase();
         PassageTable motionTable = this.player.getCurrentRoom().getMotionTable(); //where can we move?
@@ -113,10 +122,23 @@ public class AdventureGame implements Serializable {
             }
         }
 
+        if (this.player.getLevel().getLevel() < possibilities.get(0).getLevel()) {
+            return possibilities.get(0).getLevel();
+        }
+
         //try the blocked passages first
         Passage chosen = null;
         for (Passage entry : possibilities) {
             if (chosen == null && entry.getIsBlocked()) {
+                if (entry.getKeyName().equalsIgnoreCase("MINIGAME1")) {
+                    this.after = entry;
+                    return -2; // minigame encountered
+                }
+                if (entry.getKeyName().equals("BOSS")) {
+                    this.after = entry;
+                    return -3; // boss encountered
+                }
+
                 if (this.player.getInventory().contains(entry.getKeyName())) {
                     chosen = entry; //we can make it through, given our stuff
                     break;
@@ -125,10 +147,6 @@ public class AdventureGame implements Serializable {
         }
 
         if (chosen == null) return 0; //doh, we just can't move.
-
-        if (this.player.getLevel().getLevel() < chosen.getLevel()) {
-            return chosen.getLevel();
-        }
 
         int roomNumber = chosen.getDestinationRoom();
         Room room = this.rooms.get(roomNumber);
@@ -152,8 +170,12 @@ public class AdventureGame implements Serializable {
      * @param command String representation of the command.
      */
     public String interpretAction(String command){
+        if (gameState != null) {
+            return gameState.interpretAction(command);
+        }
 
         String[] inputArray = tokenize(command); //look up synonyms
+
 
         PassageTable motionTable = this.player.getCurrentRoom().getMotionTable(); //where can we move?
 
@@ -164,10 +186,17 @@ public class AdventureGame implements Serializable {
                     return "GAME OVER";
                 else return "FORCED";
             } //something is up here! We are dead or we won.
+            else if (move == -2) {
+                // minigame: snake encountered!
+                return "MINIGAME1";
+            }
+            else if (move == -3) {
+                return "BOSS START";
+            }
             else if (move == 0) {
                 return null;
             } else {
-                return "THIS PASSAGE REQUIRES LEVEL " + Integer.toString(move);
+                return "THIS PASSAGE REQUIRES LEVEL " + move;
             }
         } else if(Arrays.asList(this.actionVerbs).contains(inputArray[0])) {
             if(inputArray[0].equals("QUIT")) { return "GAME OVER"; } //time to stop!
@@ -189,8 +218,9 @@ public class AdventureGame implements Serializable {
                 if(this.player.getCurrentRoom().checkIfObjectInRoom(inputArray[1])) {
                     if (this.player.takeObject(inputArray[1])) {
                         return "YOU HAVE TAKEN: " + inputArray[1];
+
                     } else {
-                        return "YOU CAN'T PICK UP " + inputArray[1] + " AT YOUR CURRENT LEVEL.";
+                        return "YOU CAN'T PICK UP " + inputArray[1] + " AT YOUR CURRENT LEVEL. OR YOU ARE NOT THE RIGHT CLASS.";
                     }
                 } else {
                     return "THIS OBJECT IS NOT HERE: " + inputArray[1];
@@ -265,6 +295,15 @@ public class AdventureGame implements Serializable {
      */
     public void setHelpText(String help) {
         this.helpText = help;
+    }
+
+    /**
+     * getAfter
+     *
+     * @return the passage after the minigame or boss fight has been won
+     */
+    public Passage getAfter() {
+        return after;
     }
 
 

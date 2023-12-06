@@ -42,7 +42,7 @@ public class AdventureLoader {
 
         int roomNumber;
 
-        String roomFileName = this.adventureName + File.separator + "rooms.txt";
+        String roomFileName = game.getDirectoryName() + "/rooms.txt"; // placeholder to get code to run, delete when done
         BufferedReader buff = new BufferedReader(new FileReader(roomFileName));
 
         while (buff.ready()) {
@@ -89,7 +89,7 @@ public class AdventureLoader {
                     level = 0;
                 }
                 if (dest.contains("/")) {
-                    String[] blockedPath = dest.split("/+|");
+                    String[] blockedPath = dest.split("[/|]");
                     String dest_part = blockedPath[0];
                     String object = blockedPath[1];
                     Passage entry = new Passage(direction, dest_part, level, object);
@@ -109,9 +109,7 @@ public class AdventureLoader {
      * Parse Objects File
      */
     public void parseObjects() throws IOException {
-
-        
-        String objectFileName = this.adventureName + File.separator + "objects.txt";
+        String objectFileName = game.getDirectoryName() + "/objects.txt";
         BufferedReader buff = new BufferedReader(new FileReader(objectFileName));
 
         while (buff.ready()) {
@@ -125,6 +123,22 @@ public class AdventureLoader {
             } else {
                 objectXP = 0;
             }
+            int boostAttack;
+            if (objectLocation.startsWith("ATTACK ")){
+                boostAttack = Integer.parseInt(objectLocation.substring(7));
+                objectLocation = buff.readLine();
+            }
+            else{
+                boostAttack = 0;
+            }
+            String characterSpecific;
+            if (objectLocation.startsWith("CHARACTER ")){
+                characterSpecific = objectLocation.substring(10);
+                objectLocation = buff.readLine();
+            }
+            else{
+                characterSpecific = null;
+            }
             String separator = buff.readLine();
             if (separator != null && !separator.isEmpty())
                 System.out.println("Formatting Error!");
@@ -136,10 +150,13 @@ public class AdventureLoader {
             } else {
                 level = 0;
             }
+
             int i = Integer.parseInt(objectLocation);
+
             Room location = this.game.getRooms().get(i);
-            AdventureObject object = new AdventureObject(objectName, objectDescription, location, objectXP, level);
+            AdventureObject object = new AdventureObject(objectName, objectDescription, location, objectXP, level, boostAttack, characterSpecific);
             location.addGameObject(object);
+
         }
 
     }
@@ -148,7 +165,7 @@ public class AdventureLoader {
      * Parse Synonyms File
      */
     public void parseSynonyms() throws IOException {
-        String synonymsFileName = this.adventureName + File.separator + "synonyms.txt";
+        String synonymsFileName = game.getDirectoryName() + "/synonyms.txt"; // placeholder to get code to run, delete when done;
         BufferedReader buff = new BufferedReader(new FileReader(synonymsFileName));
         String line = buff.readLine();
         while(line != null){
@@ -168,7 +185,7 @@ public class AdventureLoader {
      */
     public String parseOtherFile(String fileName) throws IOException {
         String text = "";
-        fileName = this.adventureName + "/" + fileName + ".txt";
+        fileName = game.getDirectoryName() + "/" + fileName + ".txt"; // placeholder to get code to run, delete when done;
         BufferedReader buff = new BufferedReader(new FileReader(fileName));
         String line = buff.readLine();
         while (line != null) { // while not EOF

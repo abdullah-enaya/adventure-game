@@ -45,3 +45,21 @@ a small plant murmuring "Water, water"
 CHEST
 a pirate chest
 1
+
+DAGGER
+a dagger
+ATTACK 5
+CHARACTER Damage
+1
+
+RING
+a ring
+ATTACK 3
+CHARACTER Mage
+1
+
+SHIELD
+a shield
+ATTACK 1
+CHARACTER Dwarf
+1

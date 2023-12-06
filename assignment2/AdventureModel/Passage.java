@@ -35,7 +35,7 @@ public class Passage implements Serializable {
     /**
      * This stores boolean to represent if the passage is blocked.
      */
-    private boolean isBlocked;
+    public boolean isBlocked;
 
     /**
      * MotionTableEntry constructor.
@@ -118,5 +118,13 @@ public class Passage implements Serializable {
      */
     public void printPassage() {
         System.out.println(this.direction + " " + this.destinationRoom + " " + this.keyName + " " + this.isBlocked);
+    }
+
+    /**
+     * Sets a new value of blocked
+     * @param blocked the new value of blocked
+     */
+    public void setBlocked(boolean blocked) {
+        isBlocked = blocked;
     }
 }
