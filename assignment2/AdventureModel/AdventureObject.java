@@ -39,6 +39,10 @@ public class AdventureObject implements Serializable {
      */
     private boolean pickedUp;
 
+    private int boostAttack;
+
+    private String characterSpecific;
+
     /**
      * Adventure Object Constructor
      * ___________________________
@@ -48,12 +52,14 @@ public class AdventureObject implements Serializable {
      * @param description One line description of the Object.
      * @param location The location of the Object in the game.
      */
-    public AdventureObject(String name, String description, Room location, int xp, int level){
+    public AdventureObject(String name, String description, Room location, int xp, int level, int attackBoost, String characterSpecific){
         this.objectName = name;
         this.description = description;
         this.location = location;
         this.xp = xp;
         this.level = level;
+        this.boostAttack = attackBoost;
+        this.characterSpecific = characterSpecific;
         this.pickedUp = false;
     }
 
@@ -120,4 +126,24 @@ public class AdventureObject implements Serializable {
     public void setPickedUp(){
         this.pickedUp = true;
     }
+
+    /**
+     * Getter method for the boostAttack attribute.
+     *
+     * @return attack of item
+     */
+    public int getBoostAttack(){
+        return this.boostAttack;
+    }
+
+    /**
+     * Getter method for characterSpecific
+     *
+     * @return character
+     */
+    public String getCharacterSpecific() {
+        return this.characterSpecific;
+    }
+
+
 }

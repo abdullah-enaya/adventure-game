@@ -218,8 +218,9 @@ public class AdventureGame implements Serializable {
                 if(this.player.getCurrentRoom().checkIfObjectInRoom(inputArray[1])) {
                     if (this.player.takeObject(inputArray[1])) {
                         return "YOU HAVE TAKEN: " + inputArray[1];
+
                     } else {
-                        return "YOU CAN'T PICK UP " + inputArray[1] + " AT YOUR CURRENT LEVEL.";
+                        return "YOU CAN'T PICK UP " + inputArray[1] + " AT YOUR CURRENT LEVEL. OR YOU ARE NOT THE RIGHT CLASS.";
                     }
                 } else {
                     return "THIS OBJECT IS NOT HERE: " + inputArray[1];

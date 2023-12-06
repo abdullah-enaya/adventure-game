@@ -4,6 +4,7 @@ import AdventureModel.characters.Character;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * This class keeps track of the progress
@@ -45,6 +46,8 @@ public class Player implements Serializable {
      * the room and returns true. If the object is not present in the room, the method
      * returns false.
      *
+     * Added to handle case that checks if object is able to go in inventory depending on character Class
+     *
      * @param object name of the object to pick up
      * @return true if picked up, false otherwise
      */
@@ -54,7 +57,11 @@ public class Player implements Serializable {
             if (this.getLevel().getLevel() < object1.getLevel()) {
                 return false;
             }
+            if (object1.getCharacterSpecific()!= null & !Objects.equals(this.character.title, object1.getCharacterSpecific())) {
+                return false;
+            }
             this.currentRoom.removeGameObject(object1);
+
             this.addToInventory(object1);
             if (!object1.getPickedUp()) {
                 this.getLevel().addXP(object1.getXP());
@@ -108,12 +115,13 @@ public class Player implements Serializable {
     }
 
     /**
-     * This method adds an object to the inventory of the player.
+     * This method adds an object to the inventory of the player. It also adds the attribute boosts to the player.
      *
      * @param object Prop or object to be added to the inventory.
      */
     public void addToInventory(AdventureObject object) {
         this.inventory.add(object);
+        this.character.attackDamage += object.getBoostAttack();
     }
 
 
