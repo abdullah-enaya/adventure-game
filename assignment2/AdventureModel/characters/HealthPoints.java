@@ -2,7 +2,9 @@ package AdventureModel.characters;
 
 import Exceptions.NegativeValueException;
 
-public class HealthPoints {
+import java.io.Serializable;
+
+public class HealthPoints implements Serializable {
 
     /**
      * current total hp of the player
@@ -100,10 +102,4 @@ public class HealthPoints {
     public int getLives(){
         return this.lives;
     }
-
-
-
-
-
-
 }

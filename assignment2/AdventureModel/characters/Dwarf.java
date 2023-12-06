@@ -1,25 +1,28 @@
 package AdventureModel.characters;
 
+import AdventureModel.characters.abilities.ArmourUp;
 import AdventureModel.characters.abilities.BaseAbility;
 
 import java.util.ArrayList;
 
 /**
- * Damage Character class
+ * Dwarf Character class
  */
-public class Damage extends Character {
+public class Dwarf extends Character{
     /**
-     * Initialize Damage character class with unique attribute values.
+     * Initialize Dwarf character class with unique attribute values
      */
-    public Damage() {
-        this.title = "Damage";
-        this.backstory = "Assassin";
-        this.health = new HealthPoints(100, 3, 100);
-        this.attackDamage = 15;
+    public Dwarf() {
+        this.title = "Dwarf";
+        this.backstory = "Dwarf";
+        this.health = new HealthPoints(150, 3, 150);
+        this.attackDamage = 50;
         this.healingPoints = 5;
         this.specialItems = new ArrayList<>();
         this.equippedItem = null;
         this.unlockedAbilities = new ArrayList<>();
+        this.unlockedAbilities.add(new BaseAbility(this));
+        this.unlockedAbilities.add(new ArmourUp(this));
         this.equippedAbility = new BaseAbility(this);
     }
 
@@ -33,5 +36,3 @@ public class Damage extends Character {
         return null;
     }
 }
-
-

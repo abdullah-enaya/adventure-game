@@ -4,13 +4,14 @@ import AdventureModel.characters.Character;
 import AdventureModel.characters.abilities.Ability;
 import views.BossFightView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class BossFight {
+public class BossFight implements Serializable {
     public BossFightView view;
     public Boss boss;
     public Character player;

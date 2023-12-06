@@ -6,8 +6,14 @@ import AdventureModel.characters.abilities.BaseAbility;
 
 import java.util.ArrayList;
 
+/**
+ * Class Boss.
+ * Defines a Boss Character, which the player fights.
+ */
 public class Boss extends Character {
-
+    /**
+     * Boss Initializer. Initializes attributes.
+     */
     public Boss() {
         this.title = "Boss";
         this.backstory = "Boss";
@@ -20,7 +26,11 @@ public class Boss extends Character {
         this.equippedAbility = new BaseAbility(this);
     }
 
+    /**
+     * Levels up the character. Doesn't apply to Bosses.
+     */
     @Override
-    public void levelUp(int level) {
+    public String levelUp(int level) {
+        return null;
     }
 }

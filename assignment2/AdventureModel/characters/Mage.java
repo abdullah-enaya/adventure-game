@@ -5,9 +5,12 @@ import AdventureModel.characters.abilities.Fireball;
 
 import java.util.ArrayList;
 
+/**
+ * Mage Character class
+ */
 public class Mage extends Character {
     /**
-     * Mage character class initialized with unique attribute values
+     * Initialize Mage character class with unique attribute values.
      */
     public Mage() {
         this.title = "Mage";
@@ -23,32 +26,13 @@ public class Mage extends Character {
         this.equippedAbility = new BaseAbility(this);
     }
 
+    /**
+     * Updates attributes for the new level.
+     * @param level: the level to update to
+     * @return String describing the changes.
+     */
     @Override
-    public void levelUp(int level) {
+    public String levelUp(int level) {
+        return null;
     }
-//
-//    /**
-//     * Responsible for taking damage from mobs / boss
-//     * @param mob is mob damage
-//     * @return character hp
-//     */
-//    @Override
-//    public int getHit(int mob) {
-//        this.health.hp = this.health.hp - mob;
-//
-//        return this.health.hp;
-//    }
-//
-//    /**
-//     * Responsible for attacking mob with unique attack value
-//     * @return the mobs hp
-//     */
-//    @Override
-//    public int attack() {
-//        return this.attackDamage;
-//    }
-//
-//    public void playMinigame(){
-//
-//    }
 }

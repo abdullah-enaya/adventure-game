@@ -55,8 +55,7 @@ public class AdventureGameView {
     TextField inputTextField; //for user input
     Label levelLabel, xpLabel;
     ProgressBar xpBar;
-    Label livesLabel, hpLabel;
-    ProgressBar healthBar;
+    PauseTransition pause;
 
     private MediaPlayer mediaPlayer; //to play audio
     private boolean mediaPlaying; //to know if the audio is playing
@@ -204,42 +203,21 @@ public class AdventureGameView {
         levelView.getChildren().addAll(levelLabel, xpBar, xpLabel);
         HBox.setHgrow(xpBar, Priority.ALWAYS);
         levelView.setSpacing(10);
-        gridPane.add( levelView, 0, 3, 3, 1 );
+        gridPane.add(levelView, 0, 2, 3, 1 );
 
-        //Health bar
-        livesLabel = new Label( "You have lives (" + this.model.player.character.health.getLives() + ")    |    HP: ");
-        livesLabel.setStyle("-fx-text-fill: white;");
-        livesLabel.setFont(new Font("Arial", 16));
-
-        healthBar = new ProgressBar();
-        healthBar.setMaxWidth(Double.MAX_VALUE);
-
-        hpLabel = new Label();
-        hpLabel.setStyle("-fx-text-fill: white;");
-        hpLabel.setFont(new Font("Arial", 16));
-
-        HBox healthView = new HBox();
-        healthView.setStyle("-fx-background-color: #000000;");
-        healthView.setPadding(new Insets(20, 20, 20, 20));
-        healthView.getChildren().addAll(livesLabel, healthBar, hpLabel);
-        HBox.setHgrow(healthBar, Priority.ALWAYS);
-        healthView.setSpacing(10);
-        gridPane.add(healthView, 0,2,3,1);
 
         updateScene("You have selected: " + this.model.player.character.title); //method displays an image and whatever text is supplied
-        PauseTransition pause = new PauseTransition(Duration.seconds(3));
-        pause.setOnFinished(actionEvent -> updateScene(null));
-        pause.play();
-        PauseTransition healthPause = new PauseTransition(Duration.seconds(1));
-        healthPause.setOnFinished(actionEvent -> {
-            updateHealth();
-            healthPause.play();
-            if (this.model.gameState == null && this.bossView != null) {
-                this.bossView = null;
-                updateScene("FIGHT OVER.");
-            }
+        pause = new PauseTransition(Duration.seconds(3));
+        this.objectsInInventory.setDisable(true);
+        this.objectsInRoom.setDisable(true);
+        this.inputTextField.setDisable(true);
+        pause.setOnFinished(actionEvent -> {
+            updateScene(null);
+            this.objectsInInventory.setDisable(false);
+            this.objectsInRoom.setDisable(false);
+            this.inputTextField.setDisable(false);
         });
-        healthPause.play();
+        pause.play();
         updateItems(); //update items shows inventory and objects in rooms
 
         // adding the text area and submit button to a VBox
@@ -249,7 +227,7 @@ public class AdventureGameView {
         textEntry.getChildren().addAll(commandLabel, inputTextField);
         textEntry.setSpacing(10);
         textEntry.setAlignment(Pos.CENTER);
-        gridPane.add( textEntry, 0, 4, 3, 1 );
+        gridPane.add( textEntry, 0, 3, 3, 1 );
 
         // Render everything
         var scene = new Scene( gridPane ,  1000, 800);
@@ -474,7 +452,7 @@ public class AdventureGameView {
      *
      * @param text the command that needs to be processed
      */
-    private void submitEvent(String text) {
+    public void submitEvent(String text) {
 
         text = text.strip(); //get rid of white space
         stopArticulation(); //if speaking, stop
@@ -496,11 +474,6 @@ public class AdventureGameView {
 
         //try to move!
         String output = this.model.interpretAction(text); //process the command!
-
-        if (output != null && output.equals("FIGHT WON")) {
-            this.bossView = null;
-            this.updateScene(output);
-        }
 
         if (bossView != null) {
             if (output != null) {
@@ -539,9 +512,17 @@ public class AdventureGameView {
             });
             pause.play();
         } else if (output.equals("BOSS START")) {
-            this.bossView = new BossFightView(this.model);
-            this.gridPane.add(bossView.bossPane, 1, 1, 1, 1);
-            this.model.gameState = new BossState(model, bossView.bossFight);
+            this.bossView = new BossFightView(this, this.model);
+            this.objectsInRoom.setDisable(true);
+            this.objectsInInventory.setDisable(true);
+            this.saveButton.setDisable(true);
+            updateScene("You encounter a boss!");
+            PauseTransition transition = new PauseTransition(Duration.seconds(1.5));
+            transition.setOnFinished(actionEvent -> {
+                this.gridPane.add(bossView.bossPane, 1, 1, 1, 1);
+                this.model.gameState = new BossState(model, bossView.bossFight);
+            });
+            transition.play();
         }
     }
 
@@ -572,6 +553,10 @@ public class AdventureGameView {
      * @param textToDisplay the text to display below the image.
      */
     public void updateScene(String textToDisplay) {
+        if (bossView != null) {
+            return;
+        }
+
         getRoomImage(); //get the image of the current room
 
         formatText(textToDisplay); //format the text to display
@@ -588,7 +573,6 @@ public class AdventureGameView {
         stage.sizeToScene();
 
         updateLevel();
-        updateHealth();
 
         //finally, articulate the description
         if (textToDisplay == null || textToDisplay.isBlank()) articulateRoomDescription();
@@ -607,7 +591,7 @@ public class AdventureGameView {
         double xpRatio = (double) this.model.player.getLevel().getXP() / this.model.player.getLevel().getXPToNextLevel();
         xpBar.setProgress(xpRatio);
 
-        xpLabel.setText("(" + this.model.player.getLevel().getXPString() + ")");
+        xpLabel.setText("(" + this.model.player.getLevel().getXPString() + "). You have lives (" + this.model.player.character.health.getLives() + ")" );
         xpLabel.setStyle("-fx-text-fill: white;");
         xpLabel.setFont(new Font("Arial", 16));
 
@@ -620,19 +604,6 @@ public class AdventureGameView {
             });
             pause.play();
         }
-    }
-    public void updateHealth(){
-
-        String livesText = "You have Lives (" + this.model.player.character.health.getLives()+ ")    |    HP: ";
-        livesLabel.setText(livesText);
-
-        double hpRatio = (double) this.model.getPlayer().character.health.hp / this.model.getPlayer().character.health.maxHP;
-        healthBar.setProgress(hpRatio);
-
-        hpLabel.setText("(" + this.model.player.character.health.hp + "/" + this.model.player.character.health.maxHP + ")");
-        hpLabel.setStyle("-fx-text-fill: white;");
-        hpLabel.setFont(new Font("Arial", 16));
-
     }
 
 
@@ -667,7 +638,7 @@ public class AdventureGameView {
 
         int roomNumber = this.model.getPlayer().getCurrentRoom().getRoomNumber();
 
-        String roomImage = "file:" + this.model.getDirectoryName() + File.separator + "room-images" + File.separator + roomNumber + ".png";
+        String roomImage = this.model.getDirectoryName() + File.separator + "room-images" + File.separator + roomNumber + ".png";
 
         Image roomImageFile = new Image(roomImage);
         roomImageView = new ImageView(roomImageFile);
@@ -692,7 +663,7 @@ public class AdventureGameView {
 
         //write some code here to add images of objects in a given room to the objectsInRoom Vbox
         for (AdventureObject object: this.model.player.getCurrentRoom().objectsInRoom) {
-            Image image = new Image("file:" + this.model.getDirectoryName() + File.separator + "objectImages" + File.separator + object.getName() + ".jpg");
+            Image image = new Image( this.model.getDirectoryName() + File.separator + "objectImages" + File.separator + object.getName() + ".jpg");
             ImageView imageView = new ImageView();
             imageView.setImage(image);
             imageView.setFitWidth(100);

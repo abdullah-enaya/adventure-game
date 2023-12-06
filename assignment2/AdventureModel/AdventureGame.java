@@ -181,7 +181,7 @@ public class AdventureGame implements Serializable {
             else if (move == 0) {
                 return null;
             } else {
-                return "THIS PASSAGE REQUIRES LEVEL " + Integer.toString(move);
+                return "THIS PASSAGE REQUIRES LEVEL " + move;
             }
         } else if(Arrays.asList(this.actionVerbs).contains(inputArray[0])) {
             if(inputArray[0].equals("QUIT")) { return "GAME OVER"; } //time to stop!

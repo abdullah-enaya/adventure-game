@@ -1,26 +1,44 @@
 package AdventureModel;
 
+import AdventureModel.boss.ActivateAbility;
 import AdventureModel.boss.BossFight;
 import AdventureModel.boss.PlayerAttack;
 import AdventureModel.boss.PlayerHeal;
 import AdventureModel.characters.abilities.Ability;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
-public class BossState implements GameState {
-    public AdventureGame model;
-    public BossFight bossFight;
+/**
+ * Class BossState.
+ * Defines the state of AdventureGame during a boss fight.
+ */
+public class BossState implements GameState, Serializable {
+    private AdventureGame model;
+    private BossFight bossFight;
 
+    /**
+     * Initialize BossState
+     * @param model the AdventureGame model
+     * @param bossFight the BossFight that started
+     */
     public BossState(AdventureGame model, BossFight bossFight) {
         this.model = model;
         this.bossFight = bossFight;
     }
+
+    /**
+     * interpretAction
+     * interpret the user's action.
+     *
+     * @param command String representation of the command.
+     */
     @Override
     public String interpretAction(String command) {
         String[] inputArray = model.tokenize(command); //look up synonyms
 
         if(inputArray[0].equals("QUIT")) { return "GAME OVER"; } //time to stop!
-        else if(inputArray[0].equals("ABILITIES")) return bossFight.player.unlockedAbilities.toString();
+        else if(inputArray[0].equals("ABILITIES")) return bossFight.player.unlockedAbilities.toString(); //TODO
         else if(inputArray[0].equals("ABILITY") && inputArray.length < 2) return "THE ABILITY COMMAND REQUIRES AN ABILITY";
         else if(inputArray[0].equals("LEVEL") && inputArray.length < 2) {
             Level level = model.player.getLevel();
@@ -35,8 +53,8 @@ public class BossState implements GameState {
         else if(inputArray[0].equals("ABILITY") && inputArray.length == 2 && bossFight.isPlayerTurn) {
             Ability ability = model.player.character.getAbility(inputArray[1]);
             if(ability != null) {
-                if (bossFight.equipPlayerAbility(ability)) {
-                    bossFight.isPlayerTurn = false;
+                if (ability.isAvailable) {
+                    this.bossFight.commandQueue.add(new ActivateAbility(this.bossFight, ability));
                     return null;
                 } else {
                     return "YOU CAN'T ACTIVATE " + inputArray[1] + " NOW.";
@@ -56,6 +74,6 @@ public class BossState implements GameState {
             return null;
         }
 
-        return "INVALID COMMAND.";
+        return "INVALID COMMAND";
     }
 }
