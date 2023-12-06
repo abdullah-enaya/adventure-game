@@ -2,14 +2,10 @@ package views;
 
 import AdventureModel.AdventureGame;
 import AdventureModel.AdventureObject;
-import AdventureModel.character.Character;
-import AdventureModel.character.CharacterFactory;
 import SpeechToText.SpeechToText;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import AdventureModel.*;
-import AdventureModel.character.Character;
-import AdventureModel.character.CharacterFactory;
 import Minigame.SnakeView;
 import AdventureModel.BossState;
 import AdventureModel.characters.Character;
@@ -552,11 +548,11 @@ public class AdventureGameView {
             });
             pause.play();
         } else if (output.equals("BOSS START")) {
+            updateScene("You encounter a boss!");
             this.bossView = new BossFightView(this, this.model);
             this.objectsInRoom.setDisable(true);
             this.objectsInInventory.setDisable(true);
             this.saveButton.setDisable(true);
-            updateScene("You encounter a boss!");
             PauseTransition transition = new PauseTransition(Duration.seconds(1.5));
             transition.setOnFinished(actionEvent -> {
                 this.gridPane.add(bossView.bossPane, 1, 1, 1, 1);
@@ -584,7 +580,7 @@ public class AdventureGameView {
         Room roomToVisit = this.model.getRooms().get(destinationRoom);
         this.model.player.setCurrentRoom(roomToVisit);
 
-        updateScene();
+        updateScene(null);
         updateItems();
     }
 

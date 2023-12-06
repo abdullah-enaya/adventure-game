@@ -1,6 +1,5 @@
 package SpeechToText;
 
-
 import com.google.api.gax.rpc.ClientStream;
 import com.google.api.gax.rpc.ResponseObserver;
 import com.google.api.gax.rpc.StreamController;

@@ -4,7 +4,7 @@ XP 10
 You are standing at the end of a road before a small brick building.  A small stream flows out of the building and down a gully to the south.  A road runs up a small hill to the west.
 -----
 WEST       2/MINIGAME1|L2
-UP         2
+UP         2/BOSS
 NORTH      3/MINIGAME1
 IN         3
 SOUTH      4

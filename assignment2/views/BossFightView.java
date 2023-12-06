@@ -136,18 +136,6 @@ public class BossFightView {
         bossFight = new BossFight(new Boss(), this.model.player.character, this);
         PauseTransition pauseTransition = new PauseTransition(Duration.seconds(2));
         pauseTransition.setOnFinished(actionEvent -> {
-            try {
-                this.updateView(this.bossFight.commandQueue.remove().execute());
-                if (this.bossFight.commandQueue.isEmpty()) {
-                }
-            } catch (NoSuchElementException ignore) {
-            }
-            if (!this.bossFight.isPlayerTurn) {
-                this.bossFight.commandQueue.add(new BossAttack(this.bossFight, ""));
-                this.bossFight.commandQueue.add(new BossHeal(this.bossFight));
-                this.bossFight.isPlayerTurn = true;
-            }
-
             int result = this.bossFight.checkIfDone();
             if (result == 1) {
                 this.model.gameState = null;
@@ -176,6 +164,18 @@ public class BossFightView {
                     return;
                 }
                 return;
+            }
+
+            try {
+                this.updateView(this.bossFight.commandQueue.remove().execute());
+                if (this.bossFight.commandQueue.isEmpty()) {
+                }
+            } catch (NoSuchElementException ignore) {
+            }
+            if (!this.bossFight.isPlayerTurn) {
+                this.bossFight.commandQueue.add(new BossAttack(this.bossFight, ""));
+                this.bossFight.commandQueue.add(new BossHeal(this.bossFight));
+                this.bossFight.isPlayerTurn = true;
             }
 
             updateHealth();
@@ -258,7 +258,7 @@ public class BossFightView {
         path.getElements().add(new LineTo(500, -200));
 
         PathTransition pathTransition = new PathTransition();
-        pathTransition.setDuration(Duration.millis(1000));
+        pathTransition.setDuration(Duration.millis(1500));
         pathTransition.setNode(fireballSprite);
         pathTransition.setPath(path);
         pathTransition.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
