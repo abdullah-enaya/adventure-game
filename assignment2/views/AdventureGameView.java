@@ -11,6 +11,7 @@ import AdventureModel.BossState;
 import AdventureModel.characters.Character;
 import AdventureModel.characters.CharacterFactory;
 import javafx.animation.KeyFrame;
+import AdventureModel.BackgroundMusic;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.PauseTransition;
@@ -85,6 +86,7 @@ public class AdventureGameView {
 
     private MediaPlayer musicPlayer; //to play audio
     private boolean musicPlaying; //to know if the audio is playing
+    private AdventureModel.BackgroundMusic backgroundMusic = new BackgroundMusic(); // background music player
 
 
     /**
@@ -600,7 +602,7 @@ public class AdventureGameView {
     }
 
 
-    /**
+    /*
      * updateScene
      * __________________________
      * <p>
@@ -635,21 +637,8 @@ public class AdventureGameView {
         updateLevel();
 
         //play background music
-        String adventureName = this.model.getDirectoryName();
-        String roomName = this.model.getPlayer().getCurrentRoom().getRoomName();
-        String musicPath = "./" + adventureName + "/music/" + roomName.toLowerCase() + "-background.mp3";
-        musicPath = musicPath.replace(" ","-");
-        Media musicMedia = new Media(new File(musicPath).toURI().toString());  
-        
-        if (musicPlaying == true){
-            Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(3), new KeyValue(musicPlayer.volumeProperty(), 0)));
-            timeline.play();
-        }
-
-        musicPlayer = new MediaPlayer(musicMedia);
-        musicPlayer.setVolume(0.7);
-        musicPlayer.play();
-        musicPlaying = true;
+        String musicPath = ("/" + this.model.getDirectoryName() + "/music/" + (this.model.getPlayer().getCurrentRoom().getRoomName()).toLowerCase() + "-background.mp3").replace(" ","-");
+        backgroundMusic.playMusic(musicPath);
 
         //finally, articulate the description
         if (textToDisplay == null || textToDisplay.isBlank()) articulateRoomDescription();
